@@ -164,15 +164,15 @@
 
       <!-- ============ S1 HOOK TREND (0 - 3.4s, 0-17%) ============ -->
       <section id="s1" class="clip" data-start="0" data-duration="3.4" data-track-index="0">
-        <div id="s1-cap" class="center"><span class="kicker">Trend minggu ni</span></div>
-        <div id="s1-title" class="center big">Semua tengah share bisnes local</div>
+        <div id="s1-cap" class="center"><span class="kicker">Tengah trending kat Threads</span></div>
+        <div id="s1-title" class="center big" style="font-size: 84px">Mak-mak Melawati,<br />tengok ni!</div>
         <div id="post">
           <div class="post-head">
             <div class="avatar" style="background: linear-gradient(135deg, #d98b7a, #b5677f)">NA</div>
             <div class="post-handle">@nana.mamasibuk</div>
             <div class="post-time">2j</div>
           </div>
-          <div class="post-body">Jom support bisnes local!<br />Tag klinik fav korang</div>
+          <div class="post-body">Klinik wanita &amp; anak best<br />kat Melawati? Komen bawah!</div>
           <div class="post-actions">
             <div class="act">
               <svg viewBox="0 0 24 24"><path id="heart-line" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.5 3 5 6.5 5c2.1 0 3.6 1.2 4.5 2.6l1 .1C12.9 6.2 14.4 5 16.5 5 20 5 22.1 8.5 20.6 11.8 18.5 16.4 12 21 12 21z" fill="none" stroke="#6b7a77" stroke-width="2"/><path id="heart-fill" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.5 3 5 6.5 5c2.1 0 3.6 1.2 4.5 2.6l1 .1C12.9 6.2 14.4 5 16.5 5 20 5 22.1 8.5 20.6 11.8 18.5 16.4 12 21 12 21z" fill="#e5484d"/></svg>
@@ -193,7 +193,7 @@
 
       <!-- ============ S2 KESAN TREND (3.4 - 7.0s, 17-35%) ============ -->
       <section id="s2" class="clip" data-start="3.4" data-duration="3.6" data-track-index="0">
-        <div id="s2-title" class="center big">Mak-mak Melawati pun mula tanya</div>
+        <div id="s2-title" class="center big">Notification tak berhenti-henti!</div>
         <div id="bell">
           <svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4zM10 21h4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div id="badge">1</div>
@@ -233,7 +233,7 @@
       <section id="s5" class="clip" data-start="13" data-duration="3.4" data-track-index="0">
         <div class="tint"></div>
         <div id="s5-title" class="center big">Kenapa Mya Clinic?</div>
-        <!-- Features: 1-2 from myaclinic.my pages via search (site blocked here); 3 = Melawati hours confirmed by client. -->
+        <!-- Features: 1 from myaclinic.my pages via search; 2 (online booking) and 3 (Melawati hours) confirmed by client. -->
         <div class="feat" id="f1" style="top: 640px">
           <div class="chk"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <div><div class="f1">Mesra wanita, ibu &amp; anak</div></div>
@@ -274,7 +274,7 @@
       // ---------------- deterministic SFX placement ----------------
       // [file, time, volume]
       const SFX = [
-        ["pop", 0.25, 0.9],                       // post card appears
+        ["pop", 0.15, 0.9],                       // post card appears
         ["pop", 2.55, 1.0],                       // hashtag pill
         ["whoosh", 3.25, 0.8],                    // -> S2
         ["blip", 3.75, 0.7], ["blip", 4.15, 0.7], ["blip", 4.5, 0.7],
@@ -339,9 +339,9 @@
       };
 
       // S1 hook
-      tl.from("#s1-cap", { y: -40, opacity: 0, duration: 0.35, ease: "back.out(2)" }, 0.05);
-      tl.from("#s1-title", { y: 40, opacity: 0, duration: 0.45, ease: "power3.out" }, 0.12);
-      tl.from("#post", { y: 220, scale: 0.85, opacity: 0, duration: 0.55, ease: "back.out(1.6)" }, 0.25);
+      tl.from("#s1-cap", { scale: 1.12, duration: 0.35, ease: "back.out(2)" }, 0);
+      tl.from("#s1-title", { scale: 1.12, duration: 0.45, ease: "power3.out" }, 0);
+      tl.from("#post", { y: 220, scale: 0.85, opacity: 0, duration: 0.5, ease: "back.out(1.6)" }, 0.15);
       tl.to("#heart-fill", { opacity: 1, duration: 0.1 }, 0.95);
       tl.fromTo("#heart-fill", { scale: 0.4, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.35, ease: "back.out(3)" }, 0.95);
       counter("#likes", 0, 12800, 0.8, 1.8, fmtK);

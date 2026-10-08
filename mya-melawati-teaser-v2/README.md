@@ -39,5 +39,5 @@ Render tempatan perlukan Chrome headless. Dalam container ni guna
 
 - Fokus: pembukaan cawangan baru Mya Clinic di Melawati, Kuala Lumpur. CTA "SUDAH DIBUKA" (disahkan klien).
 - Waktu operasi Melawati: 8 pagi hingga 5 petang (disahkan klien).
-- Feature 1 dan 2 ("Mesra wanita, ibu & anak", "Tempah janji temu online") datang dari hasil carian subpage myaclinic.my dan listing direktori, sebab laman tu masih diblok dari environment render. **Sahkan janji temu online tersedia untuk cawangan Melawati.**
+- Feature 1 dan 2 ("Mesra wanita, ibu & anak", "Tempah janji temu online") asalnya dari hasil carian subpage myaclinic.my dan listing direktori, sebab laman tu masih diblok dari environment render. Janji temu online untuk Melawati disahkan klien.
 - Semua handle (`@nana.mamasibuk`, `@ummi.hana`, dll) dan post adalah rekaan.
