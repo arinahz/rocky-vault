@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="ms" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <!-- GSAP bundled locally: no CDN -->
+    <script src="assets/js/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Poppins"; font-weight: 500; src: url("assets/fonts/poppins-latin-500-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Poppins"; font-weight: 600; src: url("assets/fonts/poppins-latin-600-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Poppins"; font-weight: 700; src: url("assets/fonts/poppins-latin-700-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Poppins"; font-weight: 800; src: url("assets/fonts/poppins-latin-800-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Poppins"; font-weight: 900; src: url("assets/fonts/poppins-latin-900-normal.woff2") format("woff2"); }
+
+      :root {
+        /* Brand colours sampled from the Mya Clinic Melawati footage */
+        --teal: #275f5b;
+        --teal-deep: #173f3c;
+        --teal-ink: #12302d;
+        --gold: #d4af6a;
+        --cream: #f7f2ea;
+        --blush: #f3dfd8;
+        --red: #e5484d;
+        --ink: #1b2624;
+        --muted: #6b7a77;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--cream); }
+      #root { background: var(--teal-deep); position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "Poppins", sans-serif; color: var(--ink); }
+      .clip { position: absolute; inset: 0; width: 1080px; height: 1920px; overflow: hidden; }
+      .center { position: absolute; left: 0; right: 0; text-align: center; }
+
+      /* ---------- shared bits ---------- */
+      .kicker {
+        display: inline-block; padding: 14px 34px; border-radius: 999px;
+        background: var(--teal); color: #fff; font-weight: 700; font-size: 40px; letter-spacing: 0.02em;
+      }
+      .big { font-weight: 800; font-size: 92px; line-height: 1.08; letter-spacing: -0.02em; }
+      .avatar {
+        width: 92px; height: 92px; border-radius: 50%; flex: none;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 34px; color: #fff;
+      }
+
+      /* ---------- S1 hook ---------- */
+      #s1 { background: radial-gradient(120% 70% at 50% 35%, #fffaf3 0%, var(--cream) 55%, var(--blush) 100%); }
+      #s1-cap { top: 300px; }
+      #s1-title { top: 410px; padding: 0 70px; }
+      #post {
+        position: absolute; left: 70px; top: 760px; width: 940px; padding: 46px 50px 40px;
+        background: #fff; border-radius: 44px; box-shadow: 0 30px 80px rgba(23, 63, 60, 0.18);
+      }
+      .post-head { display: flex; align-items: center; gap: 24px; }
+      .post-handle { font-weight: 700; font-size: 38px; }
+      .post-time { color: var(--muted); font-weight: 500; font-size: 32px; margin-left: auto; }
+      .post-body { margin-top: 30px; font-weight: 600; font-size: 54px; line-height: 1.25; }
+      .post-actions { margin-top: 40px; display: flex; gap: 56px; align-items: center; color: var(--muted); font-weight: 700; font-size: 40px; }
+      .act { display: flex; align-items: center; gap: 14px; }
+      .act svg { width: 52px; height: 52px; }
+      #heart-fill { opacity: 0; }
+      #likes { color: var(--ink); min-width: 160px; }
+      #pill {
+        position: absolute; left: 50%; top: 1360px;
+        padding: 26px 60px; border-radius: 999px; background: var(--teal); color: #fff;
+        font-weight: 800; font-size: 76px; letter-spacing: -0.01em; white-space: nowrap;
+        box-shadow: 0 20px 50px rgba(39, 95, 91, 0.35);
+      }
+
+      /* ---------- S2 effect ---------- */
+      #s2 { background: linear-gradient(180deg, #fffaf3 0%, var(--blush) 100%); }
+      #s2-title { top: 250px; padding: 0 80px; }
+      #bell {
+        position: absolute; left: 50%; top: 520px; width: 190px; height: 190px; margin-left: -95px;
+        border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 20px 50px rgba(39, 95, 91, 0.35);
+      }
+      #bell svg { width: 100px; height: 100px; }
+      #badge {
+        position: absolute; left: 130px; top: -20px; min-width: 110px; height: 84px; padding: 0 20px;
+        border-radius: 42px; background: var(--red); color: #fff; font-weight: 800; font-size: 50px;
+        display: flex; align-items: center; justify-content: center; border: 6px solid #fff;
+      }
+      .note {
+        position: absolute; left: 80px; width: 920px; padding: 30px 36px; display: flex; gap: 24px; align-items: center;
+        background: #fff; border-radius: 36px; box-shadow: 0 18px 44px rgba(23, 63, 60, 0.16);
+      }
+      .note .avatar { width: 84px; height: 84px; font-size: 30px; }
+      .note-handle { font-weight: 700; font-size: 30px; color: #55625f; }
+      .note-text { font-weight: 700; font-size: 40px; line-height: 1.2; white-space: nowrap; }
+
+      /* ---------- S3 pain ---------- */
+      #s3 { background: radial-gradient(110% 70% at 50% 40%, #2a3634 0%, #151c1b 100%); color: #fff; }
+      #s3-title { top: 330px; padding: 0 80px; }
+      .pain {
+        position: absolute; left: 90px; width: 900px; padding: 40px 46px; border-radius: 34px;
+        background: rgba(255, 255, 255, 0.08); border: 2px solid rgba(255, 255, 255, 0.14);
+        font-weight: 700; font-size: 46px; line-height: 1.2; white-space: nowrap;
+      }
+      .pain .txt { position: relative; display: inline-block; }
+      .pain .x {
+        position: absolute; left: -8px; right: -8px; top: 54%; height: 12px; border-radius: 6px;
+        background: var(--red); transform-origin: left center; transform: scaleX(0);
+        box-shadow: 0 0 22px rgba(229, 72, 77, 0.7);
+      }
+      .pain .tag {
+        position: absolute; right: -16px; top: -26px; padding: 6px 20px; border-radius: 999px;
+        background: var(--red); color: #fff; font-size: 30px; font-weight: 800; transform: scale(0);
+      }
+
+      /* ---------- S4 reveal ---------- */
+      #s4 { background: transparent; z-index: 3; }
+      .vwrap { position: absolute; inset: 0; z-index: 1; transform: scale(1.12); }
+      .clip:not(video) { z-index: 2; }
+      .vwrap video { width: 1080px; height: 1920px; object-fit: cover; }
+      .tint { position: absolute; inset: 0; }
+      #s4 .tint { background: linear-gradient(180deg, rgba(23, 63, 60, 0.55) 0%, rgba(23, 63, 60, 0.82) 55%, rgba(18, 48, 45, 0.95) 100%); }
+      #logo { position: absolute; left: 50%; top: 560px; width: 760px; margin-left: -380px; }
+      #s4-tag { top: 1060px; color: #fff; padding: 0 70px; }
+      #s4-tag .l1 { font-weight: 600; font-size: 52px; color: var(--gold); letter-spacing: 0.01em; }
+      #s4-tag .l2 { font-weight: 800; font-size: 82px; line-height: 1.1; margin-top: 10px; }
+      #s4-vp {
+        position: absolute; left: 50%; top: 1350px; white-space: nowrap;
+        padding: 26px 50px; border-radius: 999px; background: var(--cream); color: var(--teal-ink);
+        font-weight: 800; font-size: 54px;
+      }
+      #flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+
+      /* ---------- S5 features ---------- */
+      #s5 { background: transparent; z-index: 3; }
+      #s5 .tint { background: linear-gradient(180deg, rgba(247, 242, 234, 0.9) 0%, rgba(247, 242, 234, 0.96) 100%); }
+      #s5-title { top: 300px; padding: 0 70px; color: var(--teal-ink); }
+      .feat {
+        position: absolute; left: 80px; width: 920px; padding: 40px 44px; display: flex; gap: 34px; align-items: center;
+        background: #fff; border-radius: 40px; box-shadow: 0 22px 54px rgba(23, 63, 60, 0.16);
+      }
+      .chk { width: 112px; height: 112px; flex: none; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; }
+      .chk svg { width: 70px; height: 70px; }
+      .chk path { stroke-dasharray: 60; stroke-dashoffset: 60; }
+      .feat .f1 { font-weight: 800; font-size: 50px; white-space: nowrap; line-height: 1.15; color: var(--teal-ink); }
+      .feat .f2 { font-weight: 600; font-size: 36px; color: var(--muted); margin-top: 6px; }
+
+      /* ---------- S6 CTA ---------- */
+      #s6 { background: radial-gradient(120% 80% at 50% 30%, #2f6e69 0%, var(--teal) 45%, var(--teal-deep) 100%); color: #fff; }
+      #s6-logo { position: absolute; left: 50%; top: 220px; width: 420px; margin-left: -210px; }
+      #s6-k { top: 560px; }
+      #s6-k .kicker { background: var(--gold); color: var(--teal-ink); }
+      #s6-date { top: 670px; font-weight: 900; font-size: 196px; line-height: 1; letter-spacing: -0.03em; }
+      #s6-year { top: 880px; font-weight: 800; font-size: 120px; line-height: 1; color: var(--gold); }
+      #s6-day { top: 1040px; font-weight: 700; font-size: 58px; }
+      #s6-origin { top: 1150px; font-weight: 500; font-size: 44px; color: rgba(255, 255, 255, 0.85); }
+      #cta {
+        position: absolute; left: 50%; top: 1310px; white-space: nowrap; overflow: hidden;
+        padding: 36px 70px; border-radius: 999px; background: var(--cream); color: var(--teal-ink);
+        font-weight: 800; font-size: 60px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+        display: flex; align-items: center; gap: 22px;
+      }
+      #cta svg { width: 54px; height: 54px; }
+      #s6-url { top: 1480px; font-weight: 700; font-size: 50px; color: var(--gold); letter-spacing: 0.02em; }
+      #shine { position: absolute; top: 0; bottom: 0; width: 120px; left: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent); transform: skewX(-20deg); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="20" data-width="1080" data-height="1920">
+
+      <!-- ============ S1 HOOK TREND (0 - 3.4s, 0-17%) ============ -->
+      <section id="s1" class="clip" data-start="0" data-duration="3.4" data-track-index="0">
+        <div id="s1-cap" class="center"><span class="kicker">Trend minggu ni</span></div>
+        <div id="s1-title" class="center big">Semua tengah share bisnes local</div>
+        <div id="post">
+          <div class="post-head">
+            <div class="avatar" style="background: linear-gradient(135deg, #d98b7a, #b5677f)">NA</div>
+            <div class="post-handle">@nana.mamasibuk</div>
+            <div class="post-time">2j</div>
+          </div>
+          <div class="post-body">Jom support bisnes local!<br />Tag klinik fav korang</div>
+          <div class="post-actions">
+            <div class="act">
+              <svg viewBox="0 0 24 24"><path id="heart-line" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.5 3 5 6.5 5c2.1 0 3.6 1.2 4.5 2.6l1 .1C12.9 6.2 14.4 5 16.5 5 20 5 22.1 8.5 20.6 11.8 18.5 16.4 12 21 12 21z" fill="none" stroke="#6b7a77" stroke-width="2"/><path id="heart-fill" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.5 3 5 6.5 5c2.1 0 3.6 1.2 4.5 2.6l1 .1C12.9 6.2 14.4 5 16.5 5 20 5 22.1 8.5 20.6 11.8 18.5 16.4 12 21 12 21z" fill="#e5484d"/></svg>
+              <span id="likes">0</span>
+            </div>
+            <div class="act">
+              <svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="#6b7a77" stroke-width="2" stroke-linejoin="round"/></svg>
+              <span id="replies">0</span>
+            </div>
+            <div class="act">
+              <svg viewBox="0 0 24 24"><path d="M7 7h11l-3-3M17 17H6l3 3" fill="none" stroke="#6b7a77" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span id="reposts">0</span>
+            </div>
+          </div>
+        </div>
+        <div id="pill">#SupportLocal</div>
+      </section>
+
+      <!-- ============ S2 KESAN TREND (3.4 - 7.0s, 17-35%) ============ -->
+      <section id="s2" class="clip" data-start="3.4" data-duration="3.6" data-track-index="0">
+        <div id="s2-title" class="center big">Mak-mak Melawati pun mula tanya</div>
+        <div id="bell">
+          <svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4zM10 21h4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div id="badge">1</div>
+        </div>
+        <div id="notes"></div>
+      </section>
+
+      <!-- ============ S3 PAIN (7.0 - 10.0s, 35-50%) ============ -->
+      <section id="s3" class="clip" data-start="7" data-duration="3" data-track-index="0">
+        <div id="s3-title" class="center big">Selama ni, kena hadap ni:</div>
+        <div class="pain" id="p1" style="top: 640px"><span class="txt">Drive jauh cari klinik wanita<span class="x"></span></span><span class="tag">PENAT</span></div>
+        <div class="pain" id="p2" style="top: 900px"><span class="txt">Tunggu lama, anak dah meragam<span class="x"></span></span><span class="tag">STRES</span></div>
+        <div class="pain" id="p3" style="top: 1160px"><span class="txt">Tak sempat, klinik dah tutup<span class="x"></span></span><span class="tag">HAMPA</span></div>
+      </section>
+
+      <!-- Footage layers: untimed wrappers, timed <video> children (sit under S4/S5 overlays) -->
+      <div class="vwrap" id="v4wrap">
+        <video id="v4" class="clip" src="assets/video/melawati-before-after.mp4" data-start="10" data-duration="3" data-media-start="5.2" data-track-index="1" muted playsinline></video>
+      </div>
+      <div class="vwrap" id="v5wrap">
+        <video id="v5" class="clip" src="assets/video/melawati-before-after.mp4" data-start="13" data-duration="3.4" data-media-start="2.2" data-track-index="1" muted playsinline></video>
+      </div>
+
+      <!-- ============ S4 REVEAL (10.0 - 13.0s, 50-65%) ============ -->
+      <section id="s4" class="clip" data-start="10" data-duration="3" data-track-index="0">
+        <div class="tint"></div>
+        <img id="logo" src="assets/logo-mya-white.png" alt="Mya Clinic" />
+        <div id="s4-tag" class="center">
+          <div class="l1">Klinik Mesra Wanita &amp; Keluarga</div>
+          <div class="l2">Kini di Melawati</div>
+        </div>
+        <div id="s4-vp">Lebih dekat dengan keluarga anda</div>
+        <div id="flash"></div>
+      </section>
+
+      <!-- ============ S5 FEATURES (13.0 - 16.4s, 65-82%) ============ -->
+      <section id="s5" class="clip" data-start="13" data-duration="3.4" data-track-index="0">
+        <div class="tint"></div>
+        <div id="s5-title" class="center big">Kenapa Mya Clinic?</div>
+        <!-- Features: sourced from myaclinic.my pages via search (site itself was blocked here). Verify before posting. -->
+        <div class="feat" id="f1" style="top: 640px">
+          <div class="chk"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div><div class="f1">Mesra wanita, ibu &amp; anak</div></div>
+        </div>
+        <div class="feat" id="f2" style="top: 900px">
+          <div class="chk"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div><div class="f1">Tempah janji temu online</div><div class="f2">Terus di myaclinic.my</div></div>
+        </div>
+        <div class="feat" id="f3" style="top: 1160px">
+          <div class="chk"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div><div class="f1">Buka setiap hari</div><div class="f2">8.30 pagi hingga 10.30 malam</div></div>
+        </div>
+      </section>
+
+      <!-- ============ S6 CTA (16.4 - 20.0s, 82-100%) ============ -->
+      <section id="s6" class="clip" data-start="16.4" data-duration="3.6" data-track-index="0">
+        <img id="s6-logo" src="assets/logo-mya-white.png" alt="Mya Clinic" />
+        <div id="s6-k" class="center"><span class="kicker">Pembukaan Melawati</span></div>
+        <!-- DATE: footage only says "Coming this October". Swap in the exact date + day once confirmed. -->
+        <div id="s6-date" class="center">OKTOBER</div>
+        <div id="s6-year" class="center">2026</div>
+        <div id="s6-day" class="center">Bulan ni, di Melawati KL</div>
+        <div id="s6-origin" class="center">Dari Kuantan, kini lebih dekat</div>
+        <div id="cta">
+          <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="3" fill="none" stroke="#12302d" stroke-width="2.2"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="#12302d" stroke-width="2.2" stroke-linecap="round"/></svg>
+          Tempah janji temu
+          <div id="shine"></div>
+        </div>
+        <div id="s6-url" class="center">myaclinic.my</div>
+      </section>
+
+      <!-- ============ AUDIO (all synthesized by tools/make_sfx.py) ============ -->
+      <audio id="a-beat1" src="assets/sfx/beat-intro.wav" data-start="0" data-duration="7" data-volume="0.55" data-track-index="10"></audio>
+      <audio id="a-beat2" src="assets/sfx/beat-main.wav" data-start="10" data-duration="10" data-volume="0.55" data-fade-out="0.8" data-track-index="10"></audio>
+      <div id="sfx"></div>
+    </div>
+
+    <script>
+      // ---------------- deterministic SFX placement ----------------
+      // [file, time, volume]
+      const SFX = [
+        ["pop", 0.25, 0.9],                       // post card appears
+        ["pop", 2.55, 1.0],                       // hashtag pill
+        ["whoosh", 3.25, 0.8],                    // -> S2
+        ["blip", 3.75, 0.7], ["blip", 4.15, 0.7], ["blip", 4.5, 0.7],
+        ["blip", 4.85, 0.7], ["blip", 5.15, 0.7], ["blip", 5.45, 0.7],
+        ["blip", 5.75, 0.6], ["blip", 5.95, 0.6], ["blip", 6.15, 0.6], ["blip", 6.35, 0.8],
+        ["whoosh", 6.85, 0.8],                    // -> S3 (beat stops)
+        ["pop", 7.25, 0.6], ["pop", 7.45, 0.6], ["pop", 7.65, 0.6],
+        ["scratch", 7.95, 0.9], ["scratch", 8.45, 0.9], ["scratch", 8.95, 0.9],
+        ["riser", 8.62, 0.8],                     // builds into reveal
+        ["whoosh", 9.85, 0.7],
+        ["boom", 10.0, 1.0],                      // logo reveal, beat back in
+        ["pop", 11.55, 0.6],
+        ["whoosh", 12.85, 0.8],                   // -> S5
+        ["ding", 13.45, 0.8], ["ding", 14.25, 0.8], ["ding", 15.05, 0.8],
+        ["whoosh", 16.25, 0.8],                   // -> S6
+        ["pop", 17.0, 0.7],
+        ["pop", 17.85, 0.9],                      // CTA button
+      ];
+      const LEN = { pop: 0.15, blip: 0.15, whoosh: 0.5, scratch: 0.45, riser: 1.4, boom: 1.6, ding: 0.9 };
+      const sfxHost = document.getElementById("sfx");
+      SFX.forEach(([name, at, vol], i) => {
+        const a = document.createElement("audio");
+        a.id = "sfx-" + i;
+        a.src = "assets/sfx/" + name + ".wav";
+        a.dataset.start = String(at);
+        a.dataset.duration = String(LEN[name]);
+        a.dataset.volume = String(vol);
+        a.dataset.trackIndex = String(11 + (i % 3));
+        sfxHost.appendChild(a);
+      });
+
+      // ---------------- S2 notification pile (fictional handles) ----------------
+      const NOTES = [
+        ["@ummi.hana", "Ada klinik wanita kat Melawati?", "#a8566a"],
+        ["@kaknad.kl", "Doktor perempuan ada tak?", "#3f7566"],
+        ["@farahjaga", "Boleh bawa anak sekali?", "#a8682f"],
+        ["@ibu.zara", "Malam-malam buka tak?", "#6a5fa0"],
+        ["@mira_mlwt", "Nak tahu juga!", "#3f6f92"],
+        ["@syaz.ah", "Up! Nak info", "#a5504b"],
+      ];
+      const notesHost = document.getElementById("notes");
+      NOTES.forEach(([h, txt, c], i) => {
+        const n = document.createElement("div");
+        n.className = "note";
+        n.id = "n" + i;
+        n.style.top = 820 + i * 168 + "px";
+        n.style.zIndex = String(10 + i);
+        n.innerHTML =
+          '<div class="avatar" style="background:' + c + '">' + h.replace(/[@._]/g, "").slice(0, 2).toUpperCase() + "</div>" +
+          '<div><div class="note-handle">' + h + ' membalas</div><div class="note-text">' + txt + "</div></div>";
+        notesHost.appendChild(n);
+      });
+
+      // ---------------- timeline ----------------
+      const tl = gsap.timeline({ paused: true });
+      const fmtK = (v) => (v >= 1000 ? (v / 1000).toFixed(1) + "K" : String(Math.round(v)));
+      const counter = (sel, from, to, at, dur, fmt) => {
+        const o = { v: from };
+        const el = document.querySelector(sel);
+        tl.to(o, { v: to, duration: dur, ease: "power2.in", onUpdate: () => { el.textContent = fmt(o.v); } }, at);
+        tl.call(() => { el.textContent = fmt(from); }, null, Math.max(0, at - 0.01));
+      };
+
+      // S1 hook
+      tl.from("#s1-cap", { y: -40, opacity: 0, duration: 0.35, ease: "back.out(2)" }, 0.05);
+      tl.from("#s1-title", { y: 40, opacity: 0, duration: 0.45, ease: "power3.out" }, 0.12);
+      tl.from("#post", { y: 220, scale: 0.85, opacity: 0, duration: 0.55, ease: "back.out(1.6)" }, 0.25);
+      tl.to("#heart-fill", { opacity: 1, duration: 0.1 }, 0.95);
+      tl.fromTo("#heart-fill", { scale: 0.4, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.35, ease: "back.out(3)" }, 0.95);
+      counter("#likes", 0, 12800, 0.8, 1.8, fmtK);
+      counter("#replies", 0, 2400, 0.9, 1.7, fmtK);
+      counter("#reposts", 0, 860, 1.0, 1.6, fmtK);
+      tl.fromTo("#pill", { scale: 0, xPercent: -50 }, { scale: 1, duration: 0.45, ease: "back.out(2.4)" }, 2.55);
+      tl.to("#post", { y: -30, duration: 0.6, ease: "power2.out" }, 2.55);
+      tl.to("#s1", { x: -1080, duration: 0.3, ease: "power3.in" }, 3.1);
+
+      // S2 effect
+      tl.from("#s2-title", { y: 60, opacity: 0, duration: 0.4, ease: "power3.out" }, 3.4);
+      tl.from("#bell", { scale: 0, duration: 0.45, ease: "back.out(2.5)" }, 3.5);
+      const noteT = [3.75, 4.15, 4.5, 4.85, 5.15, 5.45];
+      NOTES.forEach((_, i) => {
+        tl.from("#n" + i, { x: i % 2 ? 1100 : -1100, rotation: i % 2 ? 6 : -6, duration: 0.35, ease: "back.out(1.4)" }, noteT[i]);
+        tl.to("#bell", { rotation: 14, duration: 0.06, yoyo: true, repeat: 3, ease: "none" }, noteT[i]);
+      });
+      // pile up: earlier notes get pushed down + tilted
+      tl.to("#notes", { y: -70, duration: 2.2, ease: "power1.inOut" }, 4.2);
+      const bo = { v: 1 };
+      const badge = document.getElementById("badge");
+      tl.call(() => { badge.textContent = "1"; }, null, 3.39);
+      tl.to(bo, { v: 99, duration: 2.6, ease: "power2.in", onUpdate: () => { badge.textContent = bo.v >= 99 ? "99+" : String(Math.round(bo.v)); } }, 3.75);
+      tl.fromTo("#badge", { scale: 1 }, { scale: 1.45, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out" }, 6.35);
+      tl.to("#s2", { scale: 1.08, opacity: 0, duration: 0.3, ease: "power2.in" }, 6.7);
+
+      // S3 pain (beat is silent here)
+      tl.from("#s3-title", { opacity: 0, y: 30, duration: 0.35 }, 7.0);
+      ["#p1", "#p2", "#p3"].forEach((p, i) => {
+        tl.from(p, { x: -80, opacity: 0, duration: 0.3, ease: "power3.out" }, 7.25 + i * 0.2);
+        const at = 7.95 + i * 0.5;
+        tl.to(p + " .x", { scaleX: 1, duration: 0.22, ease: "power4.out" }, at);
+        tl.to(p + " .txt", { color: "rgba(255,255,255,0.45)", duration: 0.2 }, at + 0.05);
+        tl.to(p + " .tag", { scale: 1, duration: 0.3, ease: "back.out(3)" }, at + 0.1);
+        tl.fromTo(p, { x: 0 }, { x: 14, duration: 0.05, yoyo: true, repeat: 3, ease: "none" }, at);
+      });
+      tl.to("#s3", { scale: 1.06, duration: 1.3, ease: "power2.in" }, 8.7);
+      tl.to("#s3", { opacity: 0, duration: 0.15 }, 9.85);
+
+      // S4 reveal (boom at 10.0)
+      tl.fromTo("#flash", { opacity: 0.95 }, { opacity: 0, duration: 0.6, ease: "power2.out" }, 10.0);
+      tl.fromTo("#v4wrap", { scale: 1.3 }, { scale: 1.12, duration: 3, ease: "power2.out" }, 10.0);
+      tl.from("#logo", { scale: 0.4, opacity: 0, duration: 0.7, ease: "back.out(1.8)" }, 10.05);
+      tl.from("#s4-tag .l1", { y: 40, opacity: 0, duration: 0.4, ease: "power3.out" }, 10.75);
+      tl.from("#s4-tag .l2", { y: 40, opacity: 0, duration: 0.45, ease: "power3.out" }, 10.95);
+      tl.fromTo("#s4-vp", { scale: 0, opacity: 0, xPercent: -50 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2)" }, 11.55);
+      tl.to(["#s4", "#v4wrap"], { opacity: 0, duration: 0.3, ease: "power2.in" }, 12.7);
+
+      // S5 features
+      tl.fromTo("#v5wrap", { scale: 1.12 }, { scale: 1.22, duration: 3.4, ease: "none" }, 13.0);
+      tl.from("#s5-title", { y: 50, opacity: 0, duration: 0.4, ease: "power3.out" }, 13.0);
+      ["#f1", "#f2", "#f3"].forEach((f, i) => {
+        const at = 13.4 + i * 0.8;
+        tl.from(f, { x: 1000, duration: 0.4, ease: "power3.out" }, at);
+        tl.from(f + " .chk", { scale: 0, duration: 0.35, ease: "back.out(3)" }, at + 0.05);
+        tl.to(f + " .chk path", { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, at + 0.1);
+      });
+      tl.to(["#s5", "#v5wrap"], { opacity: 0, duration: 0.3, ease: "power2.in" }, 16.1);
+
+      // S6 CTA
+      tl.from("#s6-logo", { y: -40, opacity: 0, duration: 0.45, ease: "power3.out" }, 16.4);
+      tl.from("#s6-k", { scale: 0, duration: 0.35, ease: "back.out(2.5)" }, 16.55);
+      tl.from("#s6-date", { scale: 2.2, opacity: 0, duration: 0.5, ease: "power4.out" }, 16.7);
+      tl.from("#s6-year", { y: 60, opacity: 0, duration: 0.4, ease: "power3.out" }, 17.0);
+      tl.from("#s6-day", { y: 40, opacity: 0, duration: 0.4, ease: "power3.out" }, 17.25);
+      tl.from("#s6-origin", { y: 30, opacity: 0, duration: 0.4, ease: "power3.out" }, 17.45);
+      tl.fromTo("#cta", { scale: 0, xPercent: -50 }, { scale: 1, duration: 0.5, ease: "back.out(2.2)" }, 17.85);
+      tl.from("#s6-url", { opacity: 0, y: 20, duration: 0.4 }, 18.2);
+      tl.fromTo("#shine", { x: -200 }, { x: 900, duration: 0.8, ease: "power2.inOut" }, 18.6);
+      tl.to("#cta", { scale: 1.06, duration: 0.25, yoyo: true, repeat: 3, ease: "sine.inOut" }, 18.9);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

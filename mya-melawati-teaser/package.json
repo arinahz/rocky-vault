@@ -1,0 +1,16 @@
+{
+  "name": "mya-melawati-teaser",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sfx": "python3 tools/make_sfx.py",
+    "dev": "npx --yes hyperframes@0.8.141 preview",
+    "check": "npx --yes hyperframes@0.8.141 check",
+    "render": "npx --yes hyperframes@0.8.141 render -o renders/mya-melawati-teaser.mp4",
+    "snapshot": "npx --yes hyperframes@0.8.141 snapshot"
+  },
+  "devDependencies": {
+    "gsap": "3.13.0",
+    "hyperframes": "0.8.141"
+  }
+}
