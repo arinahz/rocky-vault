@@ -83,14 +83,10 @@
       /* ---------- S5 CTA ---------- */
       #s5 { background: var(--paper); }
       #s5-logo { position: absolute; left: 50%; top: 250px; width: 420px; margin-left: -210px; }
-      #s5-t { top: 560px; font-weight: 900; font-size: 150px; line-height: 1; letter-spacing: -0.03em; }
-      #s5-s { top: 740px; font-weight: 800; font-size: 60px; line-height: 1.15; }
-      #s5-p { top: 940px; left: 120px; right: 120px; }
-      .acts { position: absolute; top: 1140px; left: 0; right: 0; display: flex; justify-content: center; gap: 90px; }
-      .act { width: 170px; text-align: center; font-weight: 800; font-size: 34px; }
-      .act .ic { width: 140px; height: 140px; margin: 0 auto 14px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; }
-      .act .ic svg { width: 76px; height: 76px; }
-      #s5-br { top: 1440px; font-weight: 700; font-size: 32px; color: var(--teal); }
+      #s5-t { top: 560px; font-weight: 900; font-size: 136px; line-height: 1.02; letter-spacing: -0.03em; }
+      #s5-s { top: 860px; font-weight: 800; font-size: 66px; line-height: 1.15; }
+      #arrow { position: absolute; left: 50%; top: 1010px; width: 170px; height: 170px; margin-left: -85px; }
+      #s5-br { top: 1300px; font-weight: 700; font-size: 32px; color: var(--teal); }
     </style>
   </head>
   <body>
@@ -141,14 +137,9 @@
       <!-- ============ S5 CTA (13.8 - 19.0s) ============ -->
       <section id="s5" class="clip" data-start="13.8" data-duration="5.2" data-track-index="0">
         <img id="s5-logo" src="assets/img/logo-mya-dark.png" alt="Mya Clinic" />
-        <div class="center" id="s5-t">Ada soalan?</div>
-        <div class="center" id="s5-s">Tentang langkah<br />seterusnya</div>
-        <div class="pill" id="s5-p">Komen atau DM kami!</div>
-        <div class="acts">
-          <div class="act" id="ac1"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-9-8.6C1.6 8.3 3.6 5 6.8 5c2 0 3.4 1.1 4.2 2.4h2C13.8 6.1 15.2 5 17.2 5c3.2 0 5.2 3.3 3.8 6.4-2 4.3-9 8.6-9 8.6z" fill="#fff"/></svg></div>Like</div>
-          <div class="act" id="ac2"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" fill="#fff"/><path d="M8 9.5h8M8 12.5h5" stroke="#265652" stroke-width="1.8" stroke-linecap="round"/></svg></div>Komen</div>
-          <div class="act" id="ac3"><div class="ic"><svg viewBox="0 0 24 24"><path d="M21 3L3 10.5l7 2.5 2.5 7z" fill="#fff"/><path d="M10 13l11-10" stroke="#265652" stroke-width="1.6"/></svg></div>Share</div>
-        </div>
+        <div class="center" id="s5-t">Tekan link<br />di bawah</div>
+        <div class="center" id="s5-s">untuk buat temu janji</div>
+        <svg id="arrow" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#265652"/><path d="M12 6.5v10M7.5 12.5l4.5 4.5 4.5-4.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <div class="center" id="s5-br">Kg Pandan · Semambu · Gambang · Melawati KL</div>
       </section>
 
@@ -199,8 +190,7 @@
         ["whoosh", 3.15, 0.7], ["pop", 5.0, 0.6],
         ["whoosh", 6.75, 0.7], ["pop", 7.0, 0.6], ["pop", 7.6, 0.5], ["pop", 8.6, 0.6],
         ["whoosh", 10.15, 0.7], ["ding", 11.4, 0.8], ["ding", 11.9, 0.8], ["pop", 12.6, 0.6],
-        ["whoosh", 13.65, 0.7], ["pop", 14.0, 0.7], ["pop", 14.5, 0.7], ["pop", 15.2, 0.8],
-        ["blip", 15.7, 0.7], ["blip", 15.95, 0.7], ["blip", 16.2, 0.7],
+        ["whoosh", 13.65, 0.7], ["pop", 14.0, 0.8], ["pop", 14.6, 0.7], ["ding", 15.2, 0.8],
       ];
       const LEN = { pop: 0.15, blip: 0.15, whoosh: 0.5, scratch: 0.45, boom: 1.6, ding: 0.9 };
       const host = document.getElementById("sfx");
@@ -258,13 +248,10 @@
       // ---- S5 CTA ----
       tl.to("#tab", { y: -240, duration: 0.3, ease: "power2.in" }, 13.6);
       tl.from("#s5-logo", { y: -40, opacity: 0, duration: 0.4, ease: "power3.out" }, 13.9);
-      tl.from("#s5-t", { scale: 1.6, opacity: 0, duration: 0.45, ease: "power4.out" }, 14.0);
-      tl.from("#s5-s", { y: 40, opacity: 0, duration: 0.4, ease: "power3.out" }, 14.5);
-      tl.from("#s5-p", { scale: 0.5, opacity: 0, duration: 0.45, ease: "back.out(2.2)" }, 15.2);
-      ["#ac1", "#ac2", "#ac3"].forEach((a, i) => {
-        tl.from(a, { scale: 0, duration: 0.35, ease: "back.out(3)" }, 15.7 + i * 0.25);
-      });
-      tl.to("#ac2 .ic", { scale: 1.15, duration: 0.3, yoyo: true, repeat: 5, ease: "sine.inOut" }, 16.6);
+      tl.from("#s5-t", { scale: 1.5, opacity: 0, duration: 0.45, ease: "power4.out" }, 14.0);
+      tl.from("#s5-s", { y: 40, opacity: 0, duration: 0.4, ease: "power3.out" }, 14.6);
+      tl.from("#arrow", { scale: 0, duration: 0.4, ease: "back.out(3)" }, 15.2);
+      tl.to("#arrow", { y: 40, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 7 }, 15.6);
       tl.from("#s5-br", { opacity: 0, duration: 0.5 }, 16.4);
 
       window.__timelines = window.__timelines || {};

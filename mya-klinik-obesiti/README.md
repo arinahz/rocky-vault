@@ -14,9 +14,9 @@ Edit semula video `assets/video/klinik-obesiti-raw.mp4` (31.6s) jadi 19s, 1080x1
 | Masalah | 3.3 - 6.9s | "Usaha sendiri rasa tak cukup?" / "Kadang-kadang, anda cuma perlukan bimbingan" |
 | Langkah | 6.9 - 10.3s | "Konsultasi di klinik" / "Fahami keperluan badan anda dengan jelas" |
 | Sokongan | 10.3 - 13.8s | "Anda tak bersendirian": Dietitian + Pegawai sains sukan, sepanjang journey |
-| CTA | 13.8 - 19s | "Ada soalan?" / "Komen atau DM kami!" + Like, Komen, Share |
+| CTA | 13.8 - 19s | "Tekan link di bawah untuk buat temu janji" + anak panah |
 
-Semua mesej diambil dari video asal, cuma disusun semula dan dipendekkan.
+Semua mesej diambil dari video asal, cuma disusun semula dan dipendekkan. CTA ditukar atas permintaan klien.
 
 ## Perhatian polisi iklan Meta
 
