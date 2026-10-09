@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="ms" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <!-- GSAP bundled locally: no CDN -->
+    <script src="assets/js/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Poppins"; font-weight: 600; src: url("assets/fonts/poppins-latin-600-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Poppins"; font-weight: 700; src: url("assets/fonts/poppins-latin-700-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Poppins"; font-weight: 800; src: url("assets/fonts/poppins-latin-800-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Poppins"; font-weight: 900; src: url("assets/fonts/poppins-latin-900-normal.woff2") format("woff2"); }
+
+      :root {
+        /* palette sampled from the original Klinik Obesiti video */
+        --mint: #8addcf;
+        --salmon: #fcb0a0;
+        --deep: #0f4648;
+        --teal: #265652;
+        --paper: #efede8;
+        --red: #e5484d;
+        --cream: #fffaf5;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--mint); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--mint); font-family: "Poppins", sans-serif; color: var(--deep); }
+      .clip { position: absolute; inset: 0; width: 1080px; height: 1920px; overflow: hidden; }
+      section.clip { z-index: 1; }
+      .center { position: absolute; left: 0; right: 0; text-align: center; }
+
+      /* cropped footage windows: untimed wrapper, timed <video> inside (positioned by script) */
+      .crop { position: absolute; overflow: hidden; border-radius: 40px; z-index: 3; }
+      .crop video { position: absolute; left: 0; top: 0; width: 720px; height: 1280px; transform-origin: 0 0; }
+      /* frame drawn under each crop, timed with its scene */
+      .frame { position: absolute; border-radius: 48px; background: #fff; box-shadow: 0 26px 60px rgba(15, 70, 72, 0.28); }
+
+      #tab {
+        position: absolute; left: 50%; top: -40px; width: 520px; height: 190px; margin-left: -260px; z-index: 6;
+        background: #fff; border-radius: 0 0 64px 64px; box-shadow: 0 10px 0 rgba(15, 70, 72, 0.25);
+        display: flex; align-items: flex-end; justify-content: center; padding-bottom: 24px;
+      }
+      #tab img { width: 210px; }
+
+      /* ---------- S1 hook ---------- */
+      .done { position: absolute; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 24px; font-weight: 900; font-size: 84px; letter-spacing: -0.02em; }
+      .done .tick { width: 92px; height: 92px; border-radius: 50%; background: var(--deep); display: flex; align-items: center; justify-content: center; }
+      .done .tick svg { width: 58px; height: 58px; }
+      #d1 { top: 240px; }
+      #d2 { top: 360px; opacity: 0; }
+      #fr-jog, #fr-scale, #slam { opacity: 0; }
+      #slam { top: 230px; font-weight: 900; font-size: 112px; line-height: 1.0; letter-spacing: -0.02em; color: var(--deep); }
+      #slam .hl { display: inline-block; background: var(--red); color: #fff; padding: 6px 26px 12px; border-radius: 22px; margin-top: 12px; }
+
+      /* ---------- S2 ---------- */
+      #s2 { background: var(--salmon); }
+      #s2-t { top: 230px; font-weight: 900; font-size: 100px; line-height: 1.02; letter-spacing: -0.02em; }
+      .pill {
+        position: absolute; left: 70px; right: 70px; padding: 30px 40px; border-radius: 48px; text-align: center;
+        background: var(--deep); color: #fff; font-weight: 800; font-size: 52px; line-height: 1.2;
+      }
+      #s2-p { top: 1330px; }
+
+      /* ---------- S3 ---------- */
+      #s3-k { top: 230px; }
+      .kicker { display: inline-block; padding: 12px 34px; border-radius: 999px; background: #fff; color: var(--deep); font-weight: 800; font-size: 42px; }
+      #s3-t { top: 330px; font-weight: 900; font-size: 104px; line-height: 1.02; letter-spacing: -0.02em; }
+      #s3-p { top: 1430px; background: #fff; color: var(--deep); }
+
+      /* ---------- S4 ---------- */
+      #s4 { background: var(--salmon); }
+      #s4-t { top: 230px; font-weight: 900; font-size: 104px; line-height: 1.02; letter-spacing: -0.02em; }
+      .badge {
+        position: absolute; top: 1150px; width: 450px; padding: 30px 24px; border-radius: 40px; background: #fff; text-align: center;
+        box-shadow: 0 18px 40px rgba(15, 70, 72, 0.18);
+      }
+      .badge .ic { width: 96px; height: 96px; margin: 0 auto 14px; border-radius: 50%; background: var(--deep); display: flex; align-items: center; justify-content: center; }
+      .badge .ic svg { width: 56px; height: 56px; }
+      .badge .b1 { font-weight: 900; font-size: 50px; line-height: 1.1; }
+      #bd1 { left: 70px; }
+      #bd2 { right: 70px; }
+      #s4-p { top: 1480px; font-size: 48px; }
+
+      /* ---------- S5 CTA ---------- */
+      #s5 { background: var(--paper); }
+      #s5-logo { position: absolute; left: 50%; top: 250px; width: 420px; margin-left: -210px; }
+      #s5-t { top: 560px; font-weight: 900; font-size: 150px; line-height: 1; letter-spacing: -0.03em; }
+      #s5-s { top: 740px; font-weight: 800; font-size: 60px; line-height: 1.15; }
+      #s5-p { top: 940px; left: 120px; right: 120px; }
+      .acts { position: absolute; top: 1140px; left: 0; right: 0; display: flex; justify-content: center; gap: 90px; }
+      .act { width: 170px; text-align: center; font-weight: 800; font-size: 34px; }
+      .act .ic { width: 140px; height: 140px; margin: 0 auto 14px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; }
+      .act .ic svg { width: 76px; height: 76px; }
+      #s5-br { top: 1440px; font-weight: 700; font-size: 32px; color: var(--teal); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="19" data-width="1080" data-height="1920">
+      <div id="tab"><img src="assets/img/logo-mya-dark.png" alt="Mya Clinic" /></div>
+
+      <!-- ============ S1 HOOK (0 - 3.3s): quick cuts, slam on the scale ============ -->
+      <section id="s1" class="clip" data-start="0" data-duration="3.3" data-track-index="0">
+        <div class="done" id="d1"><div class="tick"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Dah jaga makan</div>
+        <div class="done" id="d2"><div class="tick"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Dah selalu bersenam</div>
+        <div class="center" id="slam">Tapi badan<br /><span class="hl">tak berubah?</span></div>
+        <div class="frame" id="fr-food" style="left: 52px; top: 532px; width: 976px; height: 656px"></div>
+        <div class="frame" id="fr-jog" style="left: 52px; top: 532px; width: 976px; height: 656px"></div>
+        <div class="frame" id="fr-scale" style="left: 152px; top: 582px; width: 776px; height: 910px"></div>
+      </section>
+
+      <!-- ============ S2 (3.3 - 6.9s) ============ -->
+      <section id="s2" class="clip" data-start="3.3" data-duration="3.6" data-track-index="0">
+        <div class="center" id="s2-t">Usaha sendiri<br />rasa tak cukup?</div>
+        <div class="frame" id="fr-tired" style="left: 52px; top: 482px; width: 976px; height: 724px"></div>
+        <div class="pill" id="s2-p">Kadang-kadang, anda cuma perlukan bimbingan</div>
+      </section>
+
+      <!-- ============ S3 (6.9 - 10.3s) ============ -->
+      <section id="s3" class="clip" data-start="6.9" data-duration="3.4" data-track-index="0">
+        <div class="center" id="s3-k"><span class="kicker">Langkah pertama</span></div>
+        <div class="center" id="s3-t">Konsultasi<br />di klinik</div>
+        <div class="frame" id="fr-doc" style="left: 52px; top: 582px; width: 836px; height: 530px"></div>
+        <div class="frame" id="fr-pat" style="left: 432px; top: 992px; width: 596px; height: 350px"></div>
+        <div class="pill" id="s3-p">Fahami keperluan badan anda dengan jelas</div>
+      </section>
+
+      <!-- ============ S4 (10.3 - 13.8s) ============ -->
+      <section id="s4" class="clip" data-start="10.3" data-duration="3.5" data-track-index="0">
+        <div class="center" id="s4-t">Anda tak<br />bersendirian</div>
+        <div class="frame" id="fr-con" style="left: 82px; top: 512px; width: 916px; height: 540px"></div>
+        <div class="badge" id="bd1">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M7 3v8a3 3 0 0 0 6 0V3M10 3v18M17 3c-1.7 0-3 2.2-3 5s1.3 4 3 4v9" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="b1">Dietitian</div>
+        </div>
+        <div class="badge" id="bd2">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+          <div class="b1">Pegawai sains sukan</div>
+        </div>
+        <div class="pill" id="s4-p">Sokong anda sepanjang <i>journey</i></div>
+      </section>
+
+      <!-- ============ S5 CTA (13.8 - 19.0s) ============ -->
+      <section id="s5" class="clip" data-start="13.8" data-duration="5.2" data-track-index="0">
+        <img id="s5-logo" src="assets/img/logo-mya-dark.png" alt="Mya Clinic" />
+        <div class="center" id="s5-t">Ada soalan?</div>
+        <div class="center" id="s5-s">Tentang langkah<br />seterusnya</div>
+        <div class="pill" id="s5-p">Komen atau DM kami!</div>
+        <div class="acts">
+          <div class="act" id="ac1"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-9-8.6C1.6 8.3 3.6 5 6.8 5c2 0 3.4 1.1 4.2 2.4h2C13.8 6.1 15.2 5 17.2 5c3.2 0 5.2 3.3 3.8 6.4-2 4.3-9 8.6-9 8.6z" fill="#fff"/></svg></div>Like</div>
+          <div class="act" id="ac2"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" fill="#fff"/><path d="M8 9.5h8M8 12.5h5" stroke="#265652" stroke-width="1.8" stroke-linecap="round"/></svg></div>Komen</div>
+          <div class="act" id="ac3"><div class="ic"><svg viewBox="0 0 24 24"><path d="M21 3L3 10.5l7 2.5 2.5 7z" fill="#fff"/><path d="M10 13l11-10" stroke="#265652" stroke-width="1.6"/></svg></div>Share</div>
+        </div>
+        <div class="center" id="s5-br">Kg Pandan · Semambu · Gambang · Melawati KL</div>
+      </section>
+
+      <!-- ============ FOOTAGE (crops of the original video, muted) ============ -->
+      <!-- data-rect = source crop x0,y0,x1,y1 in the 720x1280 original -->
+      <div class="crop" id="c-food" data-rect="6,752,474,984" style="left: 60px; top: 540px; width: 960px; height: 640px">
+        <video id="v-food" class="clip" src="assets/video/klinik-obesiti-raw.mp4" data-start="0" data-duration="0.6" data-media-start="7.4" data-track-index="1" muted playsinline></video>
+      </div>
+      <div class="crop" id="c-jog" data-rect="246,994,716,1206" style="left: 60px; top: 540px; width: 960px; height: 640px">
+        <video id="v-jog" class="clip" src="assets/video/klinik-obesiti-raw.mp4" data-start="0.6" data-duration="0.6" data-media-start="8.2" data-track-index="1" muted playsinline></video>
+      </div>
+      <div class="crop" id="c-scale" data-rect="290,700,716,1200" style="left: 160px; top: 590px; width: 760px; height: 894px">
+        <video id="v-scale" class="clip" src="assets/video/klinik-obesiti-raw.mp4" data-start="1.2" data-duration="2.1" data-media-start="13.6" data-track-index="1" muted playsinline></video>
+      </div>
+      <div class="crop" id="c-tired" data-rect="4,672,566,1084" style="left: 60px; top: 490px; width: 960px; height: 708px">
+        <video id="v-tired" class="clip" src="assets/video/klinik-obesiti-raw.mp4" data-start="3.3" data-duration="3.6" data-media-start="1.0" data-track-index="1" muted playsinline></video>
+      </div>
+      <div class="crop" id="c-doc" data-rect="4,642,472,934" style="left: 60px; top: 590px; width: 820px; height: 514px">
+        <video id="v-doc" class="clip" src="assets/video/klinik-obesiti-raw.mp4" data-start="6.9" data-duration="3.4" data-media-start="19.4" data-track-index="1" muted playsinline></video>
+      </div>
+      <div class="crop" id="c-pat" data-rect="246,942,716,1210" style="left: 440px; top: 1000px; width: 580px; height: 334px">
+        <video id="v-pat" class="clip" src="assets/video/klinik-obesiti-raw.mp4" data-start="6.9" data-duration="3.4" data-media-start="19.45" data-track-index="2" muted playsinline></video>
+      </div>
+      <div class="crop" id="c-con" data-rect="4,672,714,1084" style="left: 90px; top: 520px; width: 900px; height: 524px">
+        <video id="v-con" class="clip" src="assets/video/klinik-obesiti-raw.mp4" data-start="10.3" data-duration="3.5" data-media-start="24.6" data-track-index="1" muted playsinline></video>
+      </div>
+
+      <!-- ============ AUDIO (synthesized by tools/make_sfx.py) ============ -->
+      <audio id="a-beat" src="assets/sfx/beat.wav" data-start="1.2" data-duration="17.8" data-volume="0.5" data-fade-out="1.2" data-track-index="10"></audio>
+      <div id="sfx"></div>
+    </div>
+
+    <script>
+      // place each video so its data-rect fills (cover) the crop window
+      document.querySelectorAll(".crop").forEach((c) => {
+        const [x0, y0, x1, y1] = c.dataset.rect.split(",").map(Number);
+        const w = parseFloat(c.style.width), h = parseFloat(c.style.height);
+        const k = Math.max(w / (x1 - x0), h / (y1 - y0));
+        const ox = (w - (x1 - x0) * k) / 2 - x0 * k;
+        const oy = (h - (y1 - y0) * k) / 2 - y0 * k;
+        c.querySelector("video").style.transform = "translate(" + ox + "px," + oy + "px) scale(" + k + ")";
+      });
+
+      // [file, time, volume]
+      const SFX = [
+        ["pop", 0.0, 0.8], ["pop", 0.6, 0.8],
+        ["scratch", 1.15, 0.9], ["boom", 1.2, 0.9],
+        ["whoosh", 3.15, 0.7], ["pop", 5.0, 0.6],
+        ["whoosh", 6.75, 0.7], ["pop", 7.0, 0.6], ["pop", 7.6, 0.5], ["pop", 8.6, 0.6],
+        ["whoosh", 10.15, 0.7], ["ding", 11.4, 0.8], ["ding", 11.9, 0.8], ["pop", 12.6, 0.6],
+        ["whoosh", 13.65, 0.7], ["pop", 14.0, 0.7], ["pop", 14.5, 0.7], ["pop", 15.2, 0.8],
+        ["blip", 15.7, 0.7], ["blip", 15.95, 0.7], ["blip", 16.2, 0.7],
+      ];
+      const LEN = { pop: 0.15, blip: 0.15, whoosh: 0.5, scratch: 0.45, boom: 1.6, ding: 0.9 };
+      const host = document.getElementById("sfx");
+      SFX.forEach(([name, at, vol], i) => {
+        const a = document.createElement("audio");
+        a.id = "sfx-" + i;
+        a.src = "assets/sfx/" + name + ".wav";
+        a.dataset.start = String(at);
+        a.dataset.duration = String(LEN[name]);
+        a.dataset.volume = String(vol);
+        a.dataset.trackIndex = String(11 + (i % 3));
+        host.appendChild(a);
+      });
+
+      const tl = gsap.timeline({ paused: true });
+
+      // ---- S1 hook: readable on frame 0 ----
+      tl.from(["#c-food", "#fr-food"], { scale: 1.08, duration: 0.6, ease: "power2.out" }, 0);
+      // cut to jog
+      tl.set("#d2", { opacity: 1 }, 0.6);
+      tl.from("#d2 .tick", { scale: 0.3, duration: 0.25, ease: "back.out(3)" }, 0.6);
+      tl.set("#fr-food", { opacity: 0 }, 0.6);
+      tl.set("#fr-jog", { opacity: 1 }, 0.6);
+      tl.from(["#c-jog", "#fr-jog"], { scale: 1.08, duration: 0.6, ease: "power2.out" }, 0.6);
+      // slam on the scale
+      tl.set("#fr-jog", { opacity: 0 }, 1.2);
+      tl.set(["#fr-scale", "#slam"], { opacity: 1 }, 1.2);
+      tl.to(["#d1", "#d2"], { opacity: 0, y: -80, duration: 0.15 }, 1.2);
+      tl.fromTo("#slam", { scale: 1.9 }, { scale: 1, duration: 0.35, ease: "power4.in" }, 1.2);
+      tl.fromTo("#slam .hl", { rotation: 0 }, { rotation: -3, duration: 0.2, ease: "back.out(3)" }, 1.55);
+      tl.from(["#c-scale", "#fr-scale"], { y: 260, duration: 0.45, ease: "power3.out" }, 1.2);
+      tl.fromTo("#s1", { x: 0 }, { x: 16, duration: 0.05, yoyo: true, repeat: 5, ease: "none" }, 1.55);
+      tl.fromTo("#c-scale", { x: 0 }, { x: 16, duration: 0.05, yoyo: true, repeat: 5, ease: "none" }, 1.55);
+      tl.to(["#c-scale", "#fr-scale"], { scale: 1.05, duration: 1.4, ease: "none" }, 1.9);
+
+      // ---- S2 ----
+      tl.from("#s2-t", { y: 60, opacity: 0, duration: 0.4, ease: "power3.out" }, 3.3);
+      tl.from(["#c-tired", "#fr-tired"], { y: 120, opacity: 0, duration: 0.45, ease: "power3.out" }, 3.4);
+      tl.from("#s2-p", { scale: 0.6, opacity: 0, duration: 0.45, ease: "back.out(2)" }, 5.0);
+
+      // ---- S3 ----
+      tl.from("#s3-k", { scale: 0, duration: 0.35, ease: "back.out(2.5)" }, 7.0);
+      tl.from("#s3-t", { y: 60, opacity: 0, duration: 0.4, ease: "power3.out" }, 7.1);
+      tl.from(["#c-doc", "#fr-doc"], { x: -900, duration: 0.45, ease: "power3.out" }, 7.6);
+      tl.from(["#c-pat", "#fr-pat"], { x: 900, duration: 0.45, ease: "power3.out" }, 7.9);
+      tl.from("#s3-p", { scale: 0.6, opacity: 0, duration: 0.45, ease: "back.out(2)" }, 8.6);
+
+      // ---- S4 ----
+      tl.from("#s4-t", { y: 60, opacity: 0, duration: 0.4, ease: "power3.out" }, 10.3);
+      tl.from(["#c-con", "#fr-con"], { scale: 0.85, opacity: 0, duration: 0.45, ease: "back.out(1.6)" }, 10.5);
+      tl.from("#bd1", { y: 200, opacity: 0, duration: 0.4, ease: "back.out(1.8)" }, 11.4);
+      tl.from("#bd2", { y: 200, opacity: 0, duration: 0.4, ease: "back.out(1.8)" }, 11.9);
+      tl.from("#s4-p", { scale: 0.6, opacity: 0, duration: 0.45, ease: "back.out(2)" }, 12.6);
+
+      // ---- S5 CTA ----
+      tl.to("#tab", { y: -240, duration: 0.3, ease: "power2.in" }, 13.6);
+      tl.from("#s5-logo", { y: -40, opacity: 0, duration: 0.4, ease: "power3.out" }, 13.9);
+      tl.from("#s5-t", { scale: 1.6, opacity: 0, duration: 0.45, ease: "power4.out" }, 14.0);
+      tl.from("#s5-s", { y: 40, opacity: 0, duration: 0.4, ease: "power3.out" }, 14.5);
+      tl.from("#s5-p", { scale: 0.5, opacity: 0, duration: 0.45, ease: "back.out(2.2)" }, 15.2);
+      ["#ac1", "#ac2", "#ac3"].forEach((a, i) => {
+        tl.from(a, { scale: 0, duration: 0.35, ease: "back.out(3)" }, 15.7 + i * 0.25);
+      });
+      tl.to("#ac2 .ic", { scale: 1.15, duration: 0.3, yoyo: true, repeat: 5, ease: "sine.inOut" }, 16.6);
+      tl.from("#s5-br", { opacity: 0, duration: 0.5 }, 16.4);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
