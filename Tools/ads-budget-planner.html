@@ -1,0 +1,643 @@
+<title>Perancang Bajet Ads</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: two-pane planner. Inputs scroll on the left, a sticky "media plan" summary on the right; stacks on phones. */
+:root {
+  --bg: #EDF0F3;
+  --surface: #FFFFFF;
+  --surface-2: #F5F7F9;
+  --ink: #14202B;
+  --muted: #5A6774;
+  --line: #D4DBE2;
+  --accent: #1E4BD2;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E3EAFC;
+  --good: #1B7F52; --good-soft: #DDF2E7;
+  --warn: #9A6410; --warn-soft: #FBEFD6;
+  --bad: #B83A26; --bad-soft: #FBE3DE;
+  --s1: #1E4BD2; --s2: #E0A21A; --s3: #1B9C85; --s4: #C2477A; --s5: #6B5BD6; --s6: #5A6774;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0D1318; --surface: #151E27; --surface-2: #1B2631; --ink: #E5ECF2; --muted: #93A1AE; --line: #283542;
+  --accent: #7D9CFF; --accent-ink: #0D1318; --accent-soft: #1E2A4A;
+  --good: #4CC38A; --good-soft: #15332A; --warn: #E7B652; --warn-soft: #3A2E14; --bad: #F2806A; --bad-soft: #3D1F1A;
+  --s1: #7D9CFF; --s2: #F0B83C; --s3: #3CC7AC; --s4: #E77AA6; --s5: #A597F2; --s6: #93A1AE;
+  color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #0D1318; --surface: #151E27; --surface-2: #1B2631; --ink: #E5ECF2; --muted: #93A1AE; --line: #283542;
+  --accent: #7D9CFF; --accent-ink: #0D1318; --accent-soft: #1E2A4A;
+  --good: #4CC38A; --good-soft: #15332A; --warn: #E7B652; --warn-soft: #3A2E14; --bad: #F2806A; --bad-soft: #3D1F1A;
+  --s1: #7D9CFF; --s2: #F0B83C; --s3: #3CC7AC; --s4: #E77AA6; --s5: #A597F2; --s6: #93A1AE;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 14px; line-height: 1.5; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 48px; }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(22px, 3vw, 30px); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 16px; font-weight: 700; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+
+/* Header */
+.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+.top p { margin: 4px 0 0; color: var(--muted); max-width: 60ch; }
+.clientbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.clientbar select { min-width: 200px; max-width: 100%; }
+
+/* Controls */
+input, select, button { font: inherit; color: inherit; }
+input[type="text"], input[type="number"], input[type="date"], select {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 7px 9px; width: 100%; min-width: 0;
+}
+input[type="number"] { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+button { cursor: pointer; border-radius: 7px; padding: 7px 12px; border: 1px solid var(--line); background: var(--surface); }
+button:hover { background: var(--surface-2); }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+button.primary:hover { filter: brightness(1.08); }
+button.ghost { border-color: transparent; background: transparent; color: var(--muted); }
+button.ghost:hover { color: var(--bad); background: var(--bad-soft); }
+button.danger { color: var(--bad); }
+
+/* Grid */
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.step { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field label { font-size: 12px; font-weight: 500; color: var(--muted); }
+.field .hint { font-size: 11.5px; color: var(--muted); }
+.affix { position: relative; }
+.affix span { position: absolute; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--muted); pointer-events: none; font-family: var(--mono); }
+.affix.pre span { left: 9px; } .affix.pre input { padding-left: 34px; }
+.affix.post span { right: 9px; } .affix.post input { padding-right: 34px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; padding: 6px 12px; background: var(--surface); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+
+/* Platform rows */
+.prow { display: grid; grid-template-columns: 14px minmax(0, 1.3fr) minmax(0, 2fr) minmax(0, 1fr) 32px; gap: 10px; align-items: center; }
+.prow .sw { width: 12px; height: 12px; border-radius: 3px; }
+.prow .pct { display: flex; align-items: center; gap: 8px; }
+.prow .pct input[type="number"] { width: 64px; flex: none; padding: 5px 6px; }
+.prow-head { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+@media (max-width: 520px) {
+  .prow { grid-template-columns: 14px minmax(0, 1fr) 32px; }
+  .prow .pct, .prow .cpr { grid-column: 2 / 4; }
+  .prow-head { display: none; }
+}
+.sumline { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12.5px; }
+
+/* Pills */
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill.good { background: var(--good-soft); color: var(--good); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+
+/* Results */
+.results { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
+@media (max-width: 900px) { .results { position: static; } }
+.plan-title { display: flex; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; align-items: start; }
+.plan-title h2 { font-size: 20px; }
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+@media (max-width: 520px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.kpi { background: var(--surface); padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.kpi .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.kpi .v { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 18px; font-weight: 500; overflow-wrap: anywhere; }
+.kpi .s { font-size: 11.5px; color: var(--muted); }
+.kpi.hl { background: var(--accent-soft); }
+
+.bar { display: flex; height: 14px; border-radius: 4px; overflow: hidden; background: var(--surface-2); }
+.bar div { height: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 7px 8px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+td { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+td:first-child { font-family: var(--body); }
+tfoot td { font-weight: 600; border-bottom: 0; }
+tr.mid td { background: var(--accent-soft); }
+
+.invoice { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 13px; }
+.invoice .num { text-align: right; }
+.invoice .total { border-top: 1px solid var(--line); padding-top: 6px; font-weight: 600; }
+
+.reverse { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; }
+.reverse input { width: 90px; }
+.reverse b { font-family: var(--mono); }
+
+.actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.toast { font-size: 12px; color: var(--good); }
+textarea.copybox { width: 100%; min-height: 160px; font-family: var(--mono); font-size: 12px; background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: 7px; padding: 8px; }
+.confirm { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 12.5px; background: var(--bad-soft); color: var(--bad); padding: 6px 10px; border-radius: 7px; }
+.note { font-size: 12px; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { .bar div { transition: width .25s ease; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Perancang Bajet Ads</h1>
+      <p>Isi bajet, pecahan platform dan angka unit economics klien. Pelan media, invois dan unjuran ROAS dikira terus.</p>
+    </div>
+    <div class="clientbar">
+      <label for="clientSel" class="small muted">Klien</label>
+      <select id="clientSel"></select>
+      <button id="btnNew" type="button">+ Klien baru</button>
+      <button id="btnDup" type="button">Salin</button>
+      <button id="btnDel" type="button" class="danger">Padam</button>
+    </div>
+  </header>
+  <div id="confirmDel" class="confirm" hidden style="margin-bottom:16px">
+    Padam pelan <b id="confirmName"></b>? Tindakan ini tak boleh diundur.
+    <button id="btnDelYes" type="button" class="danger">Ya, padam</button>
+    <button id="btnDelNo" type="button">Batal</button>
+  </div>
+
+  <div class="grid">
+    <!-- INPUTS -->
+    <div class="col">
+      <section class="panel">
+        <div class="panel-head"><span class="step">Langkah 1</span><h2 style="flex:1">Klien &amp; tempoh</h2></div>
+        <div class="fields">
+          <div class="field" style="grid-column: 1 / -1">
+            <label for="name">Nama klien / kempen</label>
+            <input id="name" type="text" placeholder="cth. Kedai Tudung Ayra, Raya 2027">
+          </div>
+          <div class="field">
+            <label for="spend">Bajet ads (ad spend)</label>
+            <div class="affix pre"><span>RM</span><input id="spend" type="number" min="0" step="100"></div>
+          </div>
+          <div class="field">
+            <label for="days">Tempoh kempen</label>
+            <div class="affix post"><span>hari</span><input id="days" type="number" min="1" step="1"></div>
+          </div>
+          <div class="field">
+            <label for="start">Tarikh mula</label>
+            <input id="start" type="date">
+          </div>
+          <div class="field">
+            <label>Objektif</label>
+            <div class="seg" role="group" aria-label="Objektif">
+              <button type="button" data-obj="sales" id="objSales">Jualan</button>
+              <button type="button" data-obj="leads" id="objLeads">Leads / WhatsApp</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><span class="step">Langkah 2</span><h2 style="flex:1">Yuran &amp; cukai</h2></div>
+        <div class="fields">
+          <div class="field">
+            <label for="feePct">Management fee</label>
+            <div class="affix post"><span>%</span><input id="feePct" type="number" min="0" step="0.5"></div>
+            <span class="hint">Peratus daripada ad spend</span>
+          </div>
+          <div class="field">
+            <label for="feeFixed">Yuran tetap</label>
+            <div class="affix pre"><span>RM</span><input id="feeFixed" type="number" min="0" step="50"></div>
+            <span class="hint">Retainer, creative, dll.</span>
+          </div>
+          <div class="field">
+            <label for="sstPct">SST atas ad spend</label>
+            <div class="affix post"><span>%</span><input id="sstPct" type="number" min="0" step="1"></div>
+            <span class="hint">Meta &amp; Google caj 8% SST perkhidmatan digital</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <span class="step">Langkah 3</span><h2 style="flex:1">Pecahan platform</h2>
+          <button id="btnAddP" type="button">+ Platform</button>
+        </div>
+        <div class="prow prow-head"><span></span><span>Platform</span><span>Peratus bajet</span><span id="cprHead">Kos / jualan</span><span></span></div>
+        <div id="platforms" style="display:flex;flex-direction:column;gap:10px"></div>
+        <div class="sumline"><span class="muted">Jumlah peruntukan</span><span id="pSum"></span></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><span class="step">Langkah 4</span><h2 style="flex:1">Struktur funnel</h2></div>
+        <div class="fields" id="funnelFields"></div>
+        <div class="sumline"><span class="muted">Jumlah</span><span id="fSum"></span></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><span class="step">Langkah 5</span><h2 style="flex:1">Unit economics</h2></div>
+        <div class="fields">
+          <div class="field">
+            <label for="aov">Nilai purata order (AOV)</label>
+            <div class="affix pre"><span>RM</span><input id="aov" type="number" min="0" step="1"></div>
+          </div>
+          <div class="field">
+            <label for="margin">Margin kasar</label>
+            <div class="affix post"><span>%</span><input id="margin" type="number" min="1" max="100" step="1"></div>
+            <span class="hint">Selepas kos produk &amp; penghantaran</span>
+          </div>
+          <div class="field" id="closeField">
+            <label for="close">Kadar closing leads</label>
+            <div class="affix post"><span>%</span><input id="close" type="number" min="0" max="100" step="1"></div>
+            <span class="hint">Berapa % leads jadi jualan</span>
+          </div>
+          <div class="field">
+            <label for="targetRoas">Sasaran ROAS</label>
+            <div class="affix post"><span>x</span><input id="targetRoas" type="number" min="0" step="0.1"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="col results">
+      <section class="panel">
+        <div class="plan-title">
+          <div>
+            <span class="step">Pelan media</span>
+            <h2 id="rName"></h2>
+            <div class="small muted" id="rDates"></div>
+          </div>
+          <span id="statusPill" class="pill"></span>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><span class="k">Bajet harian</span><span class="v" id="kDaily"></span><span class="s">semua platform</span></div>
+          <div class="kpi"><span class="k" id="kResLabel">Anggaran jualan</span><span class="v" id="kRes"></span><span class="s" id="kResSub"></span></div>
+          <div class="kpi"><span class="k">Anggaran hasil</span><span class="v" id="kRev"></span><span class="s">jualan × AOV</span></div>
+          <div class="kpi hl"><span class="k">ROAS unjuran</span><span class="v" id="kRoas"></span><span class="s" id="kRoasSub"></span></div>
+          <div class="kpi"><span class="k">Breakeven ROAS</span><span class="v" id="kBe"></span><span class="s">termasuk SST &amp; yuran</span></div>
+          <div class="kpi"><span class="k">Untung kasar</span><span class="v" id="kProfit"></span><span class="s">margin − kos penuh</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="bar" id="pBar"></div>
+          <div class="legend" id="pLegend"></div>
+        </div>
+
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Platform</th><th>%</th><th>Bulanan</th><th>Harian</th><th id="tCpr">Kos/jualan</th><th id="tRes">Jualan</th></tr></thead>
+            <tbody id="pTable"></tbody>
+            <tfoot id="pFoot"></tfoot>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Funnel &amp; harian</h2>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Peringkat</th><th>%</th><th>Jumlah</th><th>Sehari</th><th>Seminggu</th></tr></thead>
+            <tbody id="fTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Senario</h2>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Senario</th><th>Kos/result</th><th id="sRes">Jualan</th><th>Hasil</th><th>ROAS</th><th>Untung</th></tr></thead>
+            <tbody id="sTable"></tbody>
+          </table>
+        </div>
+        <p class="note" style="margin:0">Konservatif anggap kos per result naik 30%. Optimistik anggap turun 25%.</p>
+        <div class="reverse">
+          Nak capai <input id="revTarget" type="number" min="1" step="1" aria-label="Sasaran bilangan jualan"> jualan, perlu bajet ads lebih kurang <b id="revOut"></b>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Invois klien</h2>
+        <div class="invoice" id="invoice"></div>
+        <div class="actions">
+          <button id="btnCopy" type="button" class="primary">Salin ringkasan untuk klien</button>
+          <span class="toast" id="toast" role="status"></span>
+        </div>
+        <textarea id="copyFallback" class="copybox" readonly hidden aria-label="Ringkasan pelan"></textarea>
+        <p class="note" style="margin:0">Pelan disimpan automatik dalam browser ini sahaja. Kalau tukar peranti, salin ringkasan dulu.</p>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const KEY = "adsBudgetPlanner.v1";
+  const SERIES = ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6"];
+  const FUNNEL = [
+    { k: "test", label: "Testing (creative & audience)" },
+    { k: "scale", label: "Scaling (winning ads)" },
+    { k: "retarget", label: "Retargeting" }
+  ];
+  const SCEN = [
+    { label: "Konservatif", m: 1.3 },
+    { label: "Jangkaan", m: 1, mid: true },
+    { label: "Optimistik", m: 0.75 }
+  ];
+
+  const uid = () => Math.random().toString(36).slice(2, 9);
+  const today = () => new Date().toISOString().slice(0, 10);
+
+  function sample() {
+    return {
+      id: uid(), name: "Contoh: Kedai Tudung Ayra", obj: "sales",
+      spend: 6000, days: 30, start: today(),
+      feePct: 15, feeFixed: 0, sstPct: 8,
+      platforms: [
+        { name: "Meta (FB/IG)", pct: 60, cpr: 25 },
+        { name: "TikTok", pct: 25, cpr: 30 },
+        { name: "Google", pct: 15, cpr: 35 }
+      ],
+      funnel: { test: 20, scale: 60, retarget: 20 },
+      aov: 89, margin: 45, close: 20, targetRoas: 3, revTarget: 300
+    };
+  }
+  function blank() {
+    const p = sample();
+    p.id = uid(); p.name = "Klien baru"; p.feePct = 15;
+    return p;
+  }
+
+  let store = load();
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) { const s = JSON.parse(raw); if (s && s.plans && s.plans.length) return s; }
+    } catch (e) {}
+    const s = sample();
+    return { current: s.id, plans: [s] };
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+  const cur = () => store.plans.find(p => p.id === store.current) || store.plans[0];
+
+  const $ = id => document.getElementById(id);
+  const n = v => { const x = parseFloat(v); return isFinite(x) ? x : 0; };
+  const nf0 = new Intl.NumberFormat("ms-MY", { maximumFractionDigits: 0 });
+  const nf2 = new Intl.NumberFormat("ms-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const rm = (v, dp) => (v < 0 ? "−RM " : "RM ") + (dp ? nf2 : nf0).format(Math.abs(v));
+  const rmAuto = v => rm(v, Math.abs(v) < 1000);
+  const cnt = v => v >= 100 ? nf0.format(v) : (Math.round(v * 10) / 10).toLocaleString("ms-MY");
+  const x2 = v => isFinite(v) ? v.toFixed(2) + "x" : "–";
+  const color = i => `var(${SERIES[i % SERIES.length]})`;
+
+  // ---------- form binding ----------
+  const simple = ["name", "spend", "days", "start", "feePct", "feeFixed", "sstPct", "aov", "margin", "close", "targetRoas", "revTarget"];
+
+  function fillForm() {
+    const p = cur();
+    simple.forEach(k => { $(k).value = p[k] ?? ""; });
+    renderPlatforms(); renderFunnelInputs(); renderObj(); renderClientSel();
+  }
+
+  simple.forEach(k => $(k).addEventListener("input", e => {
+    const p = cur();
+    p[k] = (k === "name" || k === "start") ? e.target.value : n(e.target.value);
+    if (k === "name") renderClientSel();
+    commit();
+  }));
+
+  document.querySelectorAll("[data-obj]").forEach(b => b.addEventListener("click", () => {
+    cur().obj = b.dataset.obj; renderObj(); commit();
+  }));
+  function renderObj() {
+    const leads = cur().obj === "leads";
+    $("objSales").setAttribute("aria-pressed", String(!leads));
+    $("objLeads").setAttribute("aria-pressed", String(leads));
+    $("closeField").hidden = !leads;
+    $("cprHead").textContent = leads ? "Kos / lead" : "Kos / jualan";
+  }
+
+  function renderPlatforms() {
+    const p = cur(), box = $("platforms");
+    box.innerHTML = "";
+    p.platforms.forEach((pl, i) => {
+      const row = document.createElement("div");
+      row.className = "prow";
+      row.innerHTML = `
+        <span class="sw" style="background:${color(i)}"></span>
+        <input type="text" id="pn${i}" aria-label="Nama platform" value="">
+        <div class="pct">
+          <input type="range" id="pr${i}" min="0" max="100" step="1" aria-label="Peratus bajet">
+          <div class="affix post" style="flex:none"><span>%</span><input type="number" id="pp${i}" min="0" max="100" step="1" aria-label="Peratus bajet" style="width:72px;padding-right:24px"></div>
+        </div>
+        <div class="cpr affix pre"><span>RM</span><input type="number" id="pc${i}" min="0" step="0.5" aria-label="Kos per result"></div>
+        <button type="button" class="ghost" aria-label="Buang platform" title="Buang">✕</button>`;
+      box.appendChild(row);
+      const nm = row.querySelector(`#pn${i}`), rg = row.querySelector(`#pr${i}`), pc = row.querySelector(`#pp${i}`), cp = row.querySelector(`#pc${i}`);
+      nm.value = pl.name; rg.value = pl.pct; pc.value = pl.pct; cp.value = pl.cpr;
+      nm.addEventListener("input", () => { pl.name = nm.value; commit(); });
+      rg.addEventListener("input", () => { pl.pct = n(rg.value); pc.value = rg.value; commit(); });
+      pc.addEventListener("input", () => { pl.pct = n(pc.value); rg.value = pl.pct; commit(); });
+      cp.addEventListener("input", () => { pl.cpr = n(cp.value); commit(); });
+      row.querySelector("button").addEventListener("click", () => {
+        p.platforms.splice(i, 1); renderPlatforms(); commit();
+      });
+    });
+  }
+  $("btnAddP").addEventListener("click", () => {
+    const p = cur();
+    const used = p.platforms.reduce((a, b) => a + b.pct, 0);
+    p.platforms.push({ name: "Platform " + (p.platforms.length + 1), pct: Math.max(0, 100 - used), cpr: 30 });
+    renderPlatforms(); commit();
+  });
+
+  function renderFunnelInputs() {
+    const p = cur(), box = $("funnelFields");
+    box.innerHTML = "";
+    FUNNEL.forEach(f => {
+      const d = document.createElement("div");
+      d.className = "field";
+      d.innerHTML = `<label for="f_${f.k}">${f.label}</label>
+        <div class="affix post"><span>%</span><input type="number" id="f_${f.k}" min="0" max="100" step="5"></div>`;
+      box.appendChild(d);
+      const inp = d.querySelector("input");
+      inp.value = p.funnel[f.k];
+      inp.addEventListener("input", () => { p.funnel[f.k] = n(inp.value); commit(); });
+    });
+  }
+
+  // ---------- clients ----------
+  function renderClientSel() {
+    const sel = $("clientSel");
+    sel.innerHTML = "";
+    store.plans.forEach(p => {
+      const o = document.createElement("option");
+      o.value = p.id; o.textContent = p.name || "(tiada nama)";
+      if (p.id === store.current) o.selected = true;
+      sel.appendChild(o);
+    });
+  }
+  $("clientSel").addEventListener("change", e => { store.current = e.target.value; save(); hideConfirm(); fillForm(); calc(); });
+  $("btnNew").addEventListener("click", () => {
+    const p = blank(); store.plans.push(p); store.current = p.id; save(); fillForm(); calc(); $("name").focus(); $("name").select();
+  });
+  $("btnDup").addEventListener("click", () => {
+    const p = JSON.parse(JSON.stringify(cur())); p.id = uid(); p.name = (p.name || "Pelan") + " (salinan)";
+    store.plans.push(p); store.current = p.id; save(); fillForm(); calc();
+  });
+  $("btnDel").addEventListener("click", () => { $("confirmName").textContent = cur().name || "ini"; $("confirmDel").hidden = false; });
+  function hideConfirm() { $("confirmDel").hidden = true; }
+  $("btnDelNo").addEventListener("click", hideConfirm);
+  $("btnDelYes").addEventListener("click", () => {
+    store.plans = store.plans.filter(p => p.id !== store.current);
+    if (!store.plans.length) store.plans.push(blank());
+    store.current = store.plans[0].id; save(); hideConfirm(); fillForm(); calc();
+  });
+
+  function commit() { save(); calc(); }
+
+  // ---------- maths ----------
+  function compute(p, mult = 1) {
+    const S = Math.max(0, p.spend), days = Math.max(1, p.days || 1);
+    const fee = S * p.feePct / 100 + (p.feeFixed || 0);
+    const sst = S * p.sstPct / 100;
+    const cost = S + fee + sst;
+    const rows = p.platforms.map(pl => {
+      const amt = S * pl.pct / 100;
+      const cpr = pl.cpr * mult;
+      const res = cpr > 0 ? amt / cpr : 0;
+      return { name: pl.name, pct: pl.pct, amt, daily: amt / days, cpr, res };
+    });
+    const results = rows.reduce((a, r) => a + r.res, 0);
+    const allocated = rows.reduce((a, r) => a + r.amt, 0);
+    const sales = p.obj === "leads" ? results * p.close / 100 : results;
+    const revenue = sales * p.aov;
+    const roas = S > 0 ? revenue / S : 0;
+    const be = S > 0 && p.margin > 0 ? (cost / S) / (p.margin / 100) : Infinity;
+    const profit = revenue * p.margin / 100 - cost;
+    const blendedCpr = results > 0 ? allocated / results : 0;
+    return { S, days, fee, sst, cost, rows, results, sales, revenue, roas, be, profit, blendedCpr, allocated };
+  }
+
+  function addDays(iso, d) {
+    if (!iso) return null;
+    const t = new Date(iso + "T00:00:00"); if (isNaN(t)) return null;
+    t.setDate(t.getDate() + d - 1); return t;
+  }
+  const dfmt = new Intl.DateTimeFormat("ms-MY", { day: "numeric", month: "short", year: "numeric" });
+
+  function calc() {
+    const p = cur(), r = compute(p), leads = p.obj === "leads";
+    const resWord = leads ? "Leads" : "Jualan";
+
+    $("rName").textContent = p.name || "Tanpa nama";
+    const end = addDays(p.start, r.days);
+    $("rDates").textContent = end ? `${dfmt.format(new Date(p.start + "T00:00:00"))} hingga ${dfmt.format(end)} · ${r.days} hari` : `${r.days} hari`;
+
+    $("kDaily").textContent = rmAuto(r.S / r.days);
+    $("kResLabel").textContent = leads ? "Anggaran leads" : "Anggaran jualan";
+    $("kRes").textContent = cnt(r.results);
+    $("kResSub").textContent = leads ? `≈ ${cnt(r.sales)} jualan pada ${p.close}% closing` : `purata ${rm(r.blendedCpr, 2)} sejualan`;
+    $("kRev").textContent = rm(r.revenue);
+    $("kRoas").textContent = x2(r.roas);
+    $("kRoasSub").textContent = `sasaran ${x2(p.targetRoas)}`;
+    $("kBe").textContent = x2(r.be);
+    $("kProfit").textContent = rm(r.profit);
+    $("kProfit").style.color = r.profit >= 0 ? "var(--good)" : "var(--bad)";
+
+    const pill = $("statusPill");
+    if (r.roas >= p.targetRoas && r.profit > 0) { pill.className = "pill good"; pill.textContent = "Capai sasaran"; }
+    else if (r.profit >= 0) { pill.className = "pill warn"; pill.textContent = "Untung nipis"; }
+    else { pill.className = "pill bad"; pill.textContent = "Unjuran rugi"; }
+
+    // platform bar
+    const pSum = p.platforms.reduce((a, b) => a + b.pct, 0);
+    $("pBar").innerHTML = r.rows.map((row, i) => `<div style="width:${Math.max(0, row.pct) / Math.max(100, pSum) * 100}%;background:${color(i)}" title="${row.name}"></div>`).join("");
+    $("pLegend").innerHTML = r.rows.map((row, i) => `<span><i style="background:${color(i)}"></i>${esc(row.name)} ${nf0.format(row.pct)}%</span>`).join("")
+      + (pSum < 100 ? `<span><i style="background:var(--surface-2);border:1px solid var(--line)"></i>Belum diperuntuk ${nf0.format(100 - pSum)}%</span>` : "");
+    $("pSum").innerHTML = pillFor(pSum);
+
+    $("tCpr").textContent = leads ? "Kos/lead" : "Kos/jualan";
+    $("tRes").textContent = resWord;
+    $("pTable").innerHTML = r.rows.map(row => `<tr><td>${esc(row.name)}</td><td>${nf0.format(row.pct)}</td><td>${rm(row.amt)}</td><td>${rmAuto(row.daily)}</td><td>${rm(row.cpr, 2)}</td><td>${cnt(row.res)}</td></tr>`).join("");
+    $("pFoot").innerHTML = `<tr><td>Jumlah</td><td>${nf0.format(pSum)}</td><td>${rm(r.allocated)}</td><td>${rmAuto(r.allocated / r.days)}</td><td>${rm(r.blendedCpr, 2)}</td><td>${cnt(r.results)}</td></tr>`;
+
+    // funnel
+    const fSum = FUNNEL.reduce((a, f) => a + (p.funnel[f.k] || 0), 0);
+    $("fSum").innerHTML = pillFor(fSum);
+    $("fTable").innerHTML = FUNNEL.map(f => {
+      const amt = r.S * (p.funnel[f.k] || 0) / 100;
+      return `<tr><td>${f.label}</td><td>${nf0.format(p.funnel[f.k] || 0)}</td><td>${rm(amt)}</td><td>${rmAuto(amt / r.days)}</td><td>${rmAuto(amt / r.days * 7)}</td></tr>`;
+    }).join("");
+
+    // scenarios
+    $("sRes").textContent = resWord;
+    $("sTable").innerHTML = SCEN.map(s => {
+      const q = compute(p, s.m);
+      return `<tr class="${s.mid ? "mid" : ""}"><td>${s.label}</td><td>${rm(q.blendedCpr, 2)}</td><td>${cnt(q.results)}</td><td>${rm(q.revenue)}</td><td>${x2(q.roas)}</td><td style="color:${q.profit >= 0 ? "var(--good)" : "var(--bad)"}">${rm(q.profit)}</td></tr>`;
+    }).join("");
+
+    // reverse
+    const perRM = r.S > 0 ? r.sales / r.S : 0;
+    $("revOut").textContent = perRM > 0 && p.revTarget > 0 ? rm(p.revTarget / perRM) : "–";
+
+    // invoice
+    $("invoice").innerHTML = `
+      <span>Ad spend</span><span class="num">${rm(r.S, 2)}</span>
+      <span>SST ${nf0.format(p.sstPct)}% atas ad spend</span><span class="num">${rm(r.sst, 2)}</span>
+      <span>Management fee ${nf0.format(p.feePct)}%${p.feeFixed ? " + yuran tetap" : ""}</span><span class="num">${rm(r.fee, 2)}</span>
+      <span class="total">Jumlah klien perlu sediakan</span><span class="num total">${rm(r.cost, 2)}</span>`;
+  }
+
+  function pillFor(sum) {
+    if (Math.round(sum) === 100) return `<span class="pill good">100% lengkap</span>`;
+    if (sum < 100) return `<span class="pill warn">${nf0.format(sum)}%, baki ${nf0.format(100 - sum)}%</span>`;
+    return `<span class="pill bad">${nf0.format(sum)}%, lebih ${nf0.format(sum - 100)}%</span>`;
+  }
+  function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+  // ---------- copy summary ----------
+  function summary() {
+    const p = cur(), r = compute(p), leads = p.obj === "leads";
+    const end = addDays(p.start, r.days);
+    const L = [];
+    L.push(`PELAN BAJET ADS: ${p.name}`);
+    L.push(end ? `Tempoh: ${dfmt.format(new Date(p.start + "T00:00:00"))} hingga ${dfmt.format(end)} (${r.days} hari)` : `Tempoh: ${r.days} hari`);
+    L.push("");
+    L.push(`Ad spend: ${rm(r.S)} (${rmAuto(r.S / r.days)} sehari)`);
+    r.rows.forEach(row => L.push(`  • ${row.name}: ${rm(row.amt)} (${nf0.format(row.pct)}%), ${rmAuto(row.daily)}/hari`));
+    L.push("");
+    L.push("Struktur funnel:");
+    FUNNEL.forEach(f => L.push(`  • ${f.label}: ${nf0.format(p.funnel[f.k] || 0)}% = ${rm(r.S * (p.funnel[f.k] || 0) / 100)}`));
+    L.push("");
+    L.push(`Unjuran: ${cnt(r.results)} ${leads ? "leads" : "jualan"}${leads ? ` (≈ ${cnt(r.sales)} jualan)` : ""}, hasil ${rm(r.revenue)}, ROAS ${x2(r.roas)}`);
+    L.push(`Breakeven ROAS: ${x2(r.be)} · Sasaran: ${x2(p.targetRoas)}`);
+    L.push("");
+    L.push(`SST ${nf0.format(p.sstPct)}%: ${rm(r.sst, 2)}`);
+    L.push(`Management fee: ${rm(r.fee, 2)}`);
+    L.push(`JUMLAH: ${rm(r.cost, 2)}`);
+    L.push("");
+    L.push("*Unjuran berdasarkan anggaran kos per result. Prestasi sebenar bergantung pada creative, offer dan audience.");
+    return L.join("\n");
+  }
+  $("btnCopy").addEventListener("click", () => {
+    const text = summary(), fb = $("copyFallback");
+    const done = msg => { $("toast").textContent = msg; setTimeout(() => { $("toast").textContent = ""; }, 2500); };
+    const fallback = () => { fb.hidden = false; fb.value = text; fb.focus(); fb.select(); done("Teks dipilih. Tekan Ctrl/Cmd + C untuk salin."); };
+    try {
+      navigator.clipboard.writeText(text).then(() => { fb.hidden = true; done("Disalin. Boleh paste terus ke WhatsApp atau email."); }, fallback);
+    } catch (e) { fallback(); }
+  });
+
+  fillForm(); calc();
+})();
+</script>
