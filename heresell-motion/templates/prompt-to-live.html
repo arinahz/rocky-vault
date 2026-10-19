@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Heresell · prompt-to-live</title>
+<link rel="stylesheet" href="/lib/base.css">
+<link rel="stylesheet" href="/lib/parts.css">
+<style>
+  /* ---------- Hook ---------- */
+  #hook {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  #hook .h-display { font-size: 112px; max-width: 1500px; }
+  #hook .w { display: inline-block; margin: 0 0.12em; }
+  .fmt-portrait #hook .h-display { font-size: 104px; max-width: 900px; }
+  .fmt-square #hook .h-display { font-size: 90px; max-width: 900px; }
+
+  /* ---------- Kedudukan ikut format ---------- */
+  /* 16:9 */
+  .fmt-landscape #timerSlot { top: 72px; right: 96px; }
+  .fmt-landscape #chatSlot { left: 140px; top: 170px; width: 800px; }
+  .fmt-landscape #stickySlot { left: 190px; top: 480px; width: 420px; }
+  .fmt-landscape #publishSlot { left: 140px; top: 870px; width: 800px; }
+  .fmt-landscape #phoneSlot { left: 1150px; top: 90px; }
+  .fmt-landscape #demoSlot { left: 140px; top: 1000px; }
+
+  /* 9:16, teks dalam safe area 12% atas dan bawah (y 230 hingga 1690) */
+  .fmt-portrait #timerSlot { top: 250px; right: 70px; }
+  .fmt-portrait #chatSlot { left: 70px; top: 350px; width: 940px; }
+  .fmt-portrait #phoneSlot { left: 76px; top: 600px; }
+  .fmt-portrait #stickySlot { left: 570px; top: 790px; width: 440px; }
+  .fmt-portrait #publishSlot { left: 0; top: 1500px; width: 1080px; }
+  .fmt-portrait #demoSlot { left: 70px; top: 1626px; }
+
+  /* 1:1 */
+  .fmt-square #timerSlot { top: 60px; right: 56px; }
+  .fmt-square #chatSlot { left: 56px; top: 56px; width: 740px; }
+  .fmt-square #phoneSlot { left: 70px; top: 290px; transform: scale(0.8); transform-origin: 0 0; }
+  .fmt-square #stickySlot { left: 520px; top: 330px; width: 420px; transform: scale(0.9); transform-origin: 0 0; }
+  .fmt-square #publishSlot { left: 470px; top: 770px; width: 560px; }
+  .fmt-square #demoSlot { right: 56px; top: 1000px; }
+  .fmt-square .chat .prompt { font-size: 28px; min-height: 76px; }
+  .fmt-square .chat { padding: 24px 28px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="hook"><div class="h-display a" id="hookText"></div></div>
+
+  <div class="slot" id="timerSlot">
+    <div class="timer a" id="timer">
+      <span class="ico" id="timerIco"></span><span class="val" id="timerVal">00:00</span>
+    </div>
+  </div>
+
+  <div class="slot" id="chatSlot">
+    <div class="card chat a" id="chat">
+      <div class="chat-head"><span class="dot"></span>Chat dengan Heresell</div>
+      <div class="prompt"><span id="promptText"></span><span class="caret" id="caret"></span></div>
+      <div class="chat-foot">
+        <div class="status" id="status">
+          <span class="s s-wait a" id="sWait"><span class="dots"><i></i><i></i><i></i></span>Sedang bina page kita</span>
+          <span class="s s-done a" id="sDone"><span class="ok"></span>Page siap untuk disemak</span>
+        </div>
+        <div class="send a" id="send"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slot" id="phoneSlot"><div class="a" id="phone"></div></div>
+
+  <div class="slot" id="stickySlot">
+    <div class="sticky checklist a" id="sticky">
+      <div class="ck-title">Senarai semak</div>
+      <div id="ckItems"></div>
+    </div>
+  </div>
+
+  <div class="slot" id="publishSlot">
+    <div class="publish-row">
+      <div class="publish-btn a" id="pubBtn"><span class="ico-up"></span>Publish</div>
+      <div class="url-pill a" id="urlPill"><span class="live-dot"></span><span id="urlText"></span><span class="live-tag">Live</span></div>
+    </div>
+  </div>
+
+  <div class="slot" id="demoSlot"><div class="demo-label a" id="demo"></div></div>
+
+  <div id="closing">
+    <div class="closing-inner">
+      <div class="a closing-logo" id="logo"></div>
+      <div class="a cta-pill" id="cta"></div>
+    </div>
+  </div>
+</div>
+
+<script src="/lib/motion.js"></script>
+<script src="/lib/parts.js"></script>
+<script>
+HM.boot(async (S, fmt) => {
+  const { tw, seg, set, rise, clamp, lerp, fmtClock, esc } = HM;
+  const $ = (id) => document.getElementById(id);
+  const niche = S.niche || {};
+  const D = S.durasi_saat || 20;
+  const k = D / 20; // semua masa di bawah direka untuk 20s, kemudian di-skala
+  const T = (s) => s * k;
+
+  // ---------- Isi kandungan dari JSON ----------
+  const words = String(S.hook || '').split(/\s+/).filter(Boolean);
+  $('hookText').innerHTML = words.map((w) => `<span class="w">${esc(w)}</span>`).join(' ');
+  const wordEls = [...document.querySelectorAll('#hookText .w')];
+
+  const prompt = String(S.prompt_ditaip || '');
+  const checklist = (S.checklist || []).slice(0, 6);
+  $('ckItems').innerHTML = checklist.map((c) => HMParts.checkItem(c)).join('');
+  const ckEls = [...document.querySelectorAll('#ckItems .ck')];
+
+  const phone = HMParts.phone($('phone'), niche);
+  const url = `${niche.subdomain || 'kedaikita'}.heresell.my`;
+  $('urlText').textContent = url;
+  $('demo').textContent = S.demo_label || 'Contoh paparan';
+  $('cta').textContent = S.cta || 'Daftar percuma di heresell.my';
+  $('timerIco').innerHTML = HMParts.icons.clock;
+  $('send').innerHTML = HMParts.icons.arrowUp;
+  await HM.loadLogo($('logo'), { white: true });
+
+  // ---------- Garis masa (saat, pada 20s) ----------
+  const tl = {
+    hookIn: 0.2, hookOut: 2.5,
+    uiIn: 2.8,
+    typeStart: 3.4, typeEnd: 6.4,
+    sendPress: 6.6,
+    phoneIn: 6.9, stickyIn: 7.3,
+    build: [8.1, 9.2, 10.3, 11.4], // copy, gambar, harga+promo, checkout
+    ready: 12.5,
+    pubIn: 12.7, pubPress: 13.7,
+    live: 14.3,
+    closeStart: 16.3,
+  };
+  for (const key in tl) tl[key] = Array.isArray(tl[key]) ? tl[key].map(T) : T(tl[key]);
+  const timerStart = tl.typeStart;
+  const timerStop = tl.live;
+  // Tick checklist sebarang panjang, disebar rata sepanjang fasa bina.
+  const tickAt = ckEls.map((_, i) =>
+    ckEls.length === 1 ? tl.build[3] : lerp(tl.build[0], tl.build[3], i / (ckEls.length - 1)) + T(0.4));
+
+  function render(t) {
+    // Hook: perkataan naik satu-satu, kemudian keluar ke atas.
+    const out = tw(t, tl.hookOut, T(0.45), 'inOutCubic');
+    wordEls.forEach((el, i) => {
+      const p = tw(t, tl.hookIn + i * T(0.09), T(0.6), 'outQuint');
+      set(el, { y: (1 - p) * 50 - out * 40, opacity: p * (1 - out) });
+    });
+
+    // Timer
+    const timerP = tw(t, tl.uiIn, T(0.5), 'spring');
+    const stopped = t >= timerStop;
+    set($('timer'), { scale: 0.85 + 0.15 * timerP, opacity: seg(t, tl.uiIn, T(0.25)) * (1 - tw(t, tl.closeStart, T(0.3))) });
+    $('timerVal').textContent = fmtClock(clamp(t, timerStart, timerStop) - timerStart);
+    $('timer').classList.toggle('stopped', stopped);
+    $('timerIco').innerHTML = stopped ? HMParts.icons.check : HMParts.icons.clock;
+    if (stopped) set($('timerIco'), { scale: 0.6 + 0.4 * tw(t, timerStop, T(0.5), 'spring'), opacity: 1 });
+    else set($('timerIco'), { scale: 1, opacity: 1 });
+
+    // Chat: masuk, taip huruf demi huruf, tekan hantar, status.
+    rise($('chat'), tw(t, tl.uiIn + T(0.1), T(0.7), 'spring'), 50);
+    const nChars = Math.round(prompt.length * seg(t, tl.typeStart, tl.typeEnd - tl.typeStart));
+    $('promptText').textContent = prompt.slice(0, nChars);
+    const typing = t >= tl.typeStart && t < tl.typeEnd;
+    const blinkOn = typing || Math.floor(t * 2.2) % 2 === 0;
+    $('caret').style.opacity = t < tl.uiIn || t > tl.sendPress ? 0 : blinkOn ? 1 : 0;
+    const press = seg(t, tl.sendPress, T(0.25));
+    set($('send'), { scale: 1 - 0.12 * Math.sin(press * Math.PI), opacity: 1 });
+    $('send').classList.toggle('sent', t >= tl.sendPress + T(0.12));
+    const waitIn = tw(t, tl.sendPress + T(0.2), T(0.4));
+    const doneIn = tw(t, tl.ready, T(0.5), 'spring');
+    set($('sWait'), { x: 0, y: (1 - waitIn) * 12, opacity: waitIn * (1 - seg(t, tl.ready - T(0.2), T(0.2))) });
+    set($('sDone'), { y: (1 - doneIn) * 12, opacity: seg(t, tl.ready, T(0.25)) });
+    document.querySelectorAll('#sWait .dots i').forEach((d, i) => {
+      d.style.opacity = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * 7 - i * 0.9));
+    });
+
+    // Telefon: masuk, kemudian setiap bahagian page terbina.
+    const phP = tw(t, tl.phoneIn, T(0.8), 'spring');
+    set($('phone'), { y: (1 - phP) * 120, opacity: seg(t, tl.phoneIn, T(0.3)) });
+    phone.render(t, { built: tl.build.map((b) => tw(t, b, T(0.6), 'outCubic')), live: tw(t, tl.live, T(0.5)), url, liveT: tl.live });
+
+    // Sticky note checklist, senget sedikit.
+    const stP = tw(t, tl.stickyIn, T(0.8), 'spring');
+    set($('sticky'), { y: (1 - stP) * 60, rot: -2.5 + (1 - stP) * -4, scale: 0.94 + 0.06 * stP, opacity: seg(t, tl.stickyIn, T(0.3)) });
+    ckEls.forEach((el, i) => HMParts.renderCheck(el, tw(t, tickAt[i], T(0.45), 'outCubic'), tw(t, tickAt[i], T(0.6), 'spring')));
+
+    // Publish ditekan, kemudian URL live.
+    const pubIn = tw(t, tl.pubIn, T(0.6), 'spring');
+    const pp = seg(t, tl.pubPress, T(0.3));
+    const pubOut = tw(t, tl.live - T(0.15), T(0.35), 'inOutCubic');
+    set($('pubBtn'), { y: (1 - pubIn) * 30, scale: (1 - 0.08 * Math.sin(pp * Math.PI)) * (1 - 0.2 * pubOut), opacity: seg(t, tl.pubIn, T(0.25)) * (1 - pubOut) });
+    $('pubBtn').classList.toggle('pressed', t >= tl.pubPress && t < tl.pubPress + T(0.3));
+    const urlP = tw(t, tl.live, T(0.7), 'spring');
+    set($('urlPill'), { y: (1 - urlP) * 24, scale: 0.9 + 0.1 * urlP, opacity: seg(t, tl.live, T(0.25)) });
+
+    // Label demo: muncul bila ada angka (harga) atas skrin.
+    const demoOn = seg(t, tl.build[2], T(0.4)) * (1 - seg(t, tl.closeStart, T(0.3)));
+    set($('demo'), { opacity: demoOn });
+
+    // Penutup: bulatan biru berkembang, logo putih, CTA.
+    const cp = tw(t, tl.closeStart, T(0.9), 'inOutCubic');
+    $('closing').style.clipPath = `circle(${cp * 75}% at 50% 50%)`;
+    $('closing').style.visibility = cp > 0 ? 'visible' : 'hidden';
+    const lp = tw(t, tl.closeStart + T(0.5), T(0.9), 'spring');
+    set($('logo'), { y: (1 - lp) * 40, scale: 0.9 + 0.1 * lp, opacity: seg(t, tl.closeStart + T(0.5), T(0.3)) });
+    const ctaP = tw(t, tl.closeStart + T(0.95), T(0.8), 'spring');
+    set($('cta'), { y: (1 - ctaP) * 30, opacity: seg(t, tl.closeStart + T(0.95), T(0.3)) });
+  }
+
+  return { duration: D, render };
+});
+</script>
+</body>
+</html>

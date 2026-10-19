@@ -1,0 +1,14 @@
+{
+  "name": "heresell-motion",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sistem motion video Heresell: satu JSON, banyak variasi video.",
+  "scripts": {
+    "render": "node render.js",
+    "render:all": "node render.js --all",
+    "preview": "node preview.js"
+  },
+  "dependencies": {
+    "playwright": "1.56.1"
+  }
+}

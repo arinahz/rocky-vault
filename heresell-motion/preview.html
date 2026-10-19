@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heresell Motion · Pratonton</title>
+<link rel="stylesheet" href="/lib/base.css">
+<style>
+  html, body { overflow: auto; background: #F3F6FD; }
+  body { padding: 24px 28px 40px; }
+  header { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+  h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: var(--navy); margin-right: 8px; }
+  select, button {
+    font: 600 15px 'Plus Jakarta Sans', sans-serif; color: var(--ink);
+    background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 8px 14px; cursor: pointer;
+  }
+  button.primary { background: var(--blue); color: #fff; border-color: var(--blue); min-width: 96px; }
+  .bar { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  input[type=range] { flex: 1; accent-color: var(--blue); }
+  .time { font: 700 16px 'Plus Jakarta Sans', sans-serif; font-variant-numeric: tabular-nums; min-width: 120px; text-align: right; color: var(--navy); }
+  .frames { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+  figure { display: flex; flex-direction: column; gap: 8px; }
+  figcaption { font-size: 13px; font-weight: 700; color: var(--muted); }
+  iframe { border: 0; background: #fff; border-radius: 10px; box-shadow: var(--shadow-sm); display: block; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Heresell Motion</h1>
+  <select id="scene"></select>
+  <button id="reload" title="Muat semula selepas edit JSON atau template">Muat semula</button>
+</header>
+<div class="bar">
+  <button class="primary" id="play">Main</button>
+  <input type="range" id="slider" min="0" max="20" step="0.001" value="0">
+  <div class="time" id="time">0.00 / 0.00s</div>
+</div>
+<div class="frames">
+  <figure><figcaption>16:9 · 1920x1080</figcaption><iframe data-format="landscape" width="640" height="360"></iframe></figure>
+  <figure><figcaption>9:16 · 1080x1920</figcaption><iframe data-format="portrait" width="270" height="480"></iframe></figure>
+  <figure><figcaption>1:1 · 1080x1080</figcaption><iframe data-format="square" width="400" height="400"></iframe></figure>
+</div>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const frames = [...document.querySelectorAll('iframe')];
+  let t = 0, duration = 0, playing = false, last = 0;
+
+  function show() {
+    for (const f of frames) {
+      const w = f.contentWindow;
+      if (w && w.__ready) w.render(t);
+    }
+    $('slider').value = t;
+    $('time').textContent = `${t.toFixed(2)} / ${duration.toFixed(2)}s`;
+  }
+
+  function load() {
+    const file = $('scene').value;
+    if (!file) return;
+    history.replaceState(null, '', `?scene=${encodeURIComponent(file)}`);
+    let angle = $('scene').selectedOptions[0].dataset.angle;
+    let pending = frames.length;
+    for (const f of frames) {
+      f.onload = () => {
+        const w = f.contentWindow;
+        const wait = () => {
+          if (w.__ready || w.__error) {
+            duration = Math.max(duration, w.DURATION || 0);
+            $('slider').max = duration;
+            if (--pending === 0) show();
+          } else setTimeout(wait, 50);
+        };
+        wait();
+      };
+      f.src = `/templates/${angle}.html?scene=/scenes/${encodeURIComponent(file)}&format=${f.dataset.format}&v=${Date.now()}`;
+    }
+    duration = 0;
+  }
+
+  function tick(now) {
+    if (!playing) return;
+    t += (now - last) / 1000;
+    last = now;
+    if (t >= duration) { t = duration; playing = false; $('play').textContent = 'Main'; }
+    show();
+    requestAnimationFrame(tick);
+  }
+
+  $('play').onclick = () => {
+    playing = !playing;
+    $('play').textContent = playing ? 'Jeda' : 'Main';
+    if (playing) {
+      if (t >= duration) t = 0;
+      last = performance.now();
+      requestAnimationFrame(tick);
+    }
+  };
+  $('slider').oninput = (e) => { t = Number(e.target.value); show(); };
+  $('scene').onchange = () => { t = 0; load(); };
+  $('reload').onclick = load;
+  addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); $('play').click(); }
+    if (e.code === 'ArrowRight') { t = Math.min(duration, t + 1 / 30); show(); }
+    if (e.code === 'ArrowLeft') { t = Math.max(0, t - 1 / 30); show(); }
+  });
+
+  fetch('/api/scenes').then((r) => r.json()).then((list) => {
+    const want = new URLSearchParams(location.search).get('scene');
+    $('scene').innerHTML = list.map((s) =>
+      `<option value="${s.file}" data-angle="${s.angle}" ${s.file === want ? 'selected' : ''}>${s.file} (${s.angle})</option>`).join('');
+    load();
+  });
+</script>
+</body>
+</html>

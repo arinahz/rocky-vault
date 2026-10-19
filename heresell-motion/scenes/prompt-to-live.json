@@ -1,0 +1,12 @@
+{
+  "angle": "prompt-to-live",
+  "language": "ms",
+  "niche": { "produk": "Kek Lapis Sarawak", "harga": "RM45", "promo": "promo raya", "subdomain": "dapurlapis" },
+  "hook": "Dari idea ke page live, berapa minit?",
+  "prompt_ditaip": "Buatkan salespage untuk Kek Lapis Sarawak RM45, promo raya",
+  "checklist": ["Copy dalam BM", "Gambar produk", "Harga dan promo", "FPX checkout siap"],
+  "notifikasi": ["Order baru RM45.00", "Bayaran FPX diterima", "WhatsApp pengesahan dihantar"],
+  "demo_label": "Contoh paparan",
+  "cta": "Daftar percuma di heresell.my",
+  "durasi_saat": 20
+}
