@@ -1,0 +1,347 @@
+<!--
+  MINDTROPIC AGENT RECRUITMENT PAGE
+  Cara guna di Elementor:
+  1. Tambah widget "HTML" pada page kosong (template Elementor Canvas atau Full Width).
+  2. Copy SEMUA dari <link ...> sampai </div> terakhir, paste dalam widget HTML.
+  3. Cari "[ISI" untuk semua tempat yang perlu diisi dengan data sebenar.
+  4. Cari "mtx-img" untuk tukar placeholder gambar dengan <img src="URL gambar anda" alt="...">.
+  Semua CSS diskop bawah class .mtx, jadi ia tak kacau tema Elementor anda.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+.mtx{--ungu:#3B1A8F;--ungu-gelap:#24105C;--magenta:#B0127A;--kuning:#FFB81C;--hijau:#1FAF5A;--teks:#1E1B2E;--kelabu:#5E5A72;--latar:#F5F3FA;--garis:#E4DFF0;
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--teks);line-height:1.6;font-size:16px;background:#fff;overflow-x:hidden}
+.mtx *{box-sizing:border-box;margin:0;padding:0}
+.mtx img{max-width:100%;display:block}
+.mtx a{text-decoration:none}
+.mtx .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.mtx section{padding:72px 0}
+.mtx h1,.mtx h2,.mtx h3{line-height:1.2;font-weight:800;letter-spacing:-.01em}
+.mtx h2{font-size:clamp(26px,4vw,36px);color:var(--ungu);text-align:center;margin-bottom:12px}
+.mtx .sub{text-align:center;color:var(--kelabu);max-width:640px;margin:0 auto 40px}
+.mtx .tag{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--magenta);margin-bottom:10px}
+.mtx .center{text-align:center}
+
+/* Butang */
+.mtx .btn{display:inline-flex;align-items:center;gap:10px;background:var(--hijau);color:#fff;font-weight:700;font-size:17px;padding:16px 28px;border-radius:999px;box-shadow:0 8px 24px rgba(31,175,90,.35);transition:transform .15s}
+.mtx .btn:hover{transform:translateY(-2px);color:#fff}
+.mtx .btn svg{width:22px;height:22px;fill:#fff}
+.mtx .btn-note{font-size:13px;color:var(--kelabu);margin-top:10px}
+
+/* Placeholder gambar: ganti dengan <img> */
+.mtx .mtx-img{background:repeating-linear-gradient(45deg,#ECE8F6,#ECE8F6 10px,#F4F1FA 10px,#F4F1FA 20px);border:2px dashed #C9C0E4;border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;color:#7A6FA0;font-size:13px;font-weight:600;padding:16px;min-height:220px}
+.mtx .isi{background:#FFF4D6;border-radius:4px;padding:0 4px;color:#8A5A00;font-weight:700}
+
+/* Hero */
+.mtx .hero{background:linear-gradient(135deg,var(--ungu-gelap) 0%,var(--ungu) 55%,var(--magenta) 130%);color:#fff;padding:64px 0 72px}
+.mtx .hero .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+.mtx .hero .tag{color:var(--kuning)}
+.mtx .hero h1{font-size:clamp(30px,5vw,48px);margin-bottom:18px}
+.mtx .hero h1 span{color:var(--kuning)}
+.mtx .hero p.lead{font-size:18px;opacity:.92;margin-bottom:28px;max-width:560px}
+.mtx .hero .btn-note{color:rgba(255,255,255,.75)}
+.mtx .hero .mtx-img{min-height:380px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.35);color:rgba(255,255,255,.8)}
+.mtx .proof-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.mtx .chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:10px 14px;font-size:14px}
+.mtx .chip b{display:block;font-size:20px;color:var(--kuning)}
+
+/* Untuk siapa */
+.mtx .fit{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.mtx .fit .box{border-radius:20px;padding:28px}
+.mtx .fit .ya{background:#EAF8F0;border:1px solid #BFE8D0}
+.mtx .fit .tidak{background:#FDEEF0;border:1px solid #F3C6CD}
+.mtx .fit h3{font-size:20px;margin-bottom:16px}
+.mtx .fit ul{list-style:none;display:grid;gap:12px}
+.mtx .fit li{padding-left:30px;position:relative}
+.mtx .fit li::before{position:absolute;left:0;top:0;font-weight:800;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff}
+.mtx .fit .ya li::before{content:"✓";background:var(--hijau)}
+.mtx .fit .tidak li::before{content:"✕";background:#D6455B}
+
+/* Kes study */
+.mtx .case{background:var(--latar)}
+.mtx .case .grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.mtx .stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0}
+.mtx .stat{background:#fff;border:1px solid var(--garis);border-radius:16px;padding:18px}
+.mtx .stat small{color:var(--kelabu);font-size:13px;font-weight:600}
+.mtx .stat b{display:block;font-size:24px;color:var(--ungu)}
+.mtx .case p{margin-bottom:14px}
+
+/* Sokongan */
+.mtx .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.mtx .card{background:#fff;border:1px solid var(--garis);border-radius:18px;padding:24px;box-shadow:0 6px 20px rgba(59,26,143,.06)}
+.mtx .card .ic{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--ungu),var(--magenta));color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px}
+.mtx .card h3{font-size:17px;color:var(--ungu);margin-bottom:6px}
+.mtx .card p{font-size:14.5px;color:var(--kelabu)}
+
+/* Langkah */
+.mtx .steps{background:var(--ungu-gelap);color:#fff}
+.mtx .steps h2{color:#fff}
+.mtx .steps .sub{color:rgba(255,255,255,.75)}
+.mtx .step-list{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:s}
+.mtx .step{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:24px;counter-increment:s}
+.mtx .step::before{content:counter(s);display:flex;width:38px;height:38px;border-radius:50%;background:var(--kuning);color:var(--ungu-gelap);font-weight:800;align-items:center;justify-content:center;margin-bottom:14px}
+.mtx .step h3{font-size:17px;margin-bottom:6px}
+.mtx .step p{font-size:14.5px;color:rgba(255,255,255,.8)}
+
+/* Produk */
+.mtx .prod{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px}
+.mtx .prod .card{display:grid;grid-template-columns:140px 1fr;gap:18px;align-items:center}
+.mtx .prod .mtx-img{min-height:160px}
+.mtx .trust{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.mtx .trust div{background:var(--latar);border-radius:14px;padding:16px;text-align:center;font-size:14px;color:var(--kelabu)}
+.mtx .trust b{display:block;color:var(--ungu);font-size:16px;margin-bottom:2px}
+
+/* Pelan pemasaran */
+.mtx .plan{background:var(--latar)}
+.mtx .tbl{max-width:820px;margin:0 auto;display:grid;gap:10px}
+.mtx .row{display:grid;grid-template-columns:90px 1fr 1.1fr;gap:12px;align-items:center;background:#fff;border:1px solid var(--garis);border-radius:14px;padding:12px 16px}
+.mtx .row.head{background:var(--ungu);color:#fff;border:0;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.mtx .row .pct{font-size:26px;font-weight:800;color:var(--magenta)}
+.mtx .row .rank{font-weight:700;color:var(--ungu)}
+.mtx .row .req{font-size:14px;color:var(--kelabu)}
+.mtx .note{max-width:820px;margin:16px auto 0;font-size:13px;color:var(--kelabu);text-align:center}
+
+/* Top earners */
+.mtx .earners{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.mtx .earner{text-align:center}
+.mtx .earner .mtx-img{min-height:260px;margin-bottom:14px}
+.mtx .earner small{color:var(--kelabu);font-size:13px}
+.mtx .earner h3{font-size:16px;margin:4px 0}
+.mtx .earner b{font-size:24px;color:var(--ungu)}
+
+/* FAQ */
+.mtx .faq{background:var(--latar)}
+.mtx details{background:#fff;border:1px solid var(--garis);border-radius:14px;margin:0 auto 12px;max-width:820px}
+.mtx summary{cursor:pointer;list-style:none;padding:18px 52px 18px 20px;font-weight:700;color:var(--ungu);position:relative}
+.mtx summary::-webkit-details-marker{display:none}
+.mtx summary::after{content:"+";position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:22px;color:var(--magenta)}
+.mtx details[open] summary::after{content:"−"}
+.mtx details p{padding:0 20px 18px;color:var(--kelabu)}
+
+/* CTA akhir */
+.mtx .final{background:linear-gradient(135deg,var(--ungu-gelap),var(--ungu));color:#fff;text-align:center}
+.mtx .final h2{color:#fff}
+.mtx .final .sub{color:rgba(255,255,255,.8)}
+.mtx .final .btn-note{color:rgba(255,255,255,.7)}
+.mtx .foot{background:#160A3A;color:rgba(255,255,255,.55);font-size:12px;text-align:center;padding:20px}
+
+/* Butang WhatsApp terapung (mobile) */
+.mtx .float{position:fixed;right:16px;bottom:16px;z-index:999;width:58px;height:58px;border-radius:50%;background:var(--hijau);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.mtx .float svg{width:30px;height:30px;fill:#fff}
+
+@media (max-width:900px){
+  .mtx .cards,.mtx .step-list{grid-template-columns:1fr 1fr}
+  .mtx .trust{grid-template-columns:1fr 1fr}
+}
+@media (max-width:760px){
+  .mtx section{padding:52px 0}
+  .mtx .hero .grid,.mtx .fit,.mtx .case .grid,.mtx .prod{grid-template-columns:1fr}
+  .mtx .hero .mtx-img{min-height:260px}
+  .mtx .earners{grid-template-columns:1fr;max-width:340px;margin:0 auto}
+  .mtx .prod .card{grid-template-columns:110px 1fr}
+  .mtx .row{grid-template-columns:64px 1fr;}
+  .mtx .row .req{grid-column:1 / -1}
+  .mtx .row.head .req{display:none}
+  .mtx .btn{width:100%;justify-content:center}
+}
+@media (max-width:480px){
+  .mtx .cards,.mtx .step-list,.mtx .stats{grid-template-columns:1fr}
+}
+</style>
+
+<div class="mtx">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap grid">
+      <div>
+        <span class="tag">Agent Mindtropic · Eskayvie Nexus</span>
+        <h1>Masih Bergaji, Tapi Nak <span>Pendapatan Kedua</span> Dari Iklan Online?</h1>
+        <p class="lead">Saya jual Mindtropic 100% guna iklan. Sekarang saya buka slot untuk pekerja dan beginner ads yang nak ikut cara yang sama. Anda dapat landing page siap, bahan iklan dan group mentoring. Anda sediakan bajet iklan sendiri.</p>
+        <a class="btn" href="https://wa.me/60185887284?text=Hai%2C%20saya%20berminat%20nak%20jadi%20agent%20Mindtropic.%20Boleh%20share%20info%3F" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.3-.5 0-1 .2-3.2-.7-2.7-1.1-4.4-3.9-4.5-4-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>
+          WhatsApp Saya Untuk Info
+        </a>
+        <p class="btn-note">Saya sendiri yang jawab. Tiada bayaran untuk bertanya.</p>
+        <div class="proof-row">
+          <div class="chip"><b><span class="isi">[ISI: RMxx,xxx]</span></b>jualan dari iklan</div>
+          <div class="chip"><b><span class="isi">[ISI: xx bulan]</span></b>tempoh run iklan</div>
+          <div class="chip"><b>17 tahun</b>Eskayvie beroperasi</div>
+        </div>
+      </div>
+      <div class="mtx-img">GAMBAR: Foto anda pegang produk Mindtropic, atau screenshot dashboard iklan (portrait)</div>
+    </div>
+  </section>
+
+  <!-- ============ UNTUK SIAPA ============ -->
+  <section>
+    <div class="wrap">
+      <h2>Sebelum Anda WhatsApp, Baca Ini Dulu</h2>
+      <p class="sub">Cara saya bergantung pada iklan berbayar. Jadi saya nak berterus terang dari awal siapa yang sesuai dan siapa yang tidak.</p>
+      <div class="fit">
+        <div class="box ya">
+          <h3>Sesuai untuk anda kalau...</h3>
+          <ul>
+            <li>Anda bekerja makan gaji dan nak satu sumber pendapatan yang boleh diurus waktu malam atau hujung minggu.</li>
+            <li>Anda baru nak belajar iklan Facebook atau TikTok, atau pernah cuba tapi tak tahu nak mula dari mana.</li>
+            <li>Anda sanggup keluarkan bajet iklan sendiri dan faham ia satu pelaburan, bukan jaminan.</li>
+            <li>Anda boleh ikut langkah, uji, dan tanya dalam group bila tersekat.</li>
+          </ul>
+        </div>
+        <div class="box tidak">
+          <h3>Tak sesuai kalau...</h3>
+          <ul>
+            <li>Anda cari cara dapat duit tanpa keluar modal langsung.</li>
+            <li>Anda nak hasil dalam minggu pertama dan berhenti kalau iklan pertama tak menjadi.</li>
+            <li>Anda lebih suka jual melalui kawan, keluarga atau rekrut orang secara bersemuka.</li>
+            <li>Anda tak boleh luangkan sekurang-kurangnya <span class="isi">[ISI: x jam]</span> seminggu untuk pantau iklan.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KES STUDY ============ -->
+  <section class="case">
+    <div class="wrap grid">
+      <div class="mtx-img" style="min-height:420px">GAMBAR: Screenshot Ads Manager (bajet, jualan, ROAS). Kaburkan maklumat peribadi.</div>
+      <div>
+        <span class="tag">Kes Study Saya</span>
+        <h2 style="text-align:left">Apa Yang Jadi Bila Saya Jual Mindtropic Guna Iklan</h2>
+        <p><span class="isi">[ISI: Cerita ringkas. Contoh: Saya mula dengan bajet RMxx sehari pada bulan ___. Iklan pertama saya gagal sebab ___. Bila saya tukar ke ___, jualan mula masuk.]</span></p>
+        <div class="stats">
+          <div class="stat"><small>Bajet iklan sebulan</small><b><span class="isi">[RMx,xxx]</span></b></div>
+          <div class="stat"><small>Jualan sebulan</small><b><span class="isi">[RMxx,xxx]</span></b></div>
+          <div class="stat"><small>ROAS purata</small><b><span class="isi">[x.x]</span></b></div>
+          <div class="stat"><small>Tempoh</small><b><span class="isi">[x bulan]</span></b></div>
+        </div>
+        <p>Cara inilah yang saya ajar dalam group. Dari audience, angle iklan, hingga landing page yang sama saya guna.</p>
+        <p style="font-size:13px;color:var(--kelabu)">Keputusan saya bukan jaminan untuk anda. Hasil bergantung pada bajet, konsistensi dan kesungguhan masing-masing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ APA ANDA DAPAT ============ -->
+  <section>
+    <div class="wrap">
+      <span class="tag" style="display:block;text-align:center">Sokongan Untuk Agent</span>
+      <h2>Anda Fokus Pada Iklan. Yang Lain Dah Disediakan.</h2>
+      <p class="sub">Beginner selalunya tersekat bukan sebab iklan, tapi sebab perlu bina semuanya sendiri. Bahagian itu kami dah siapkan.</p>
+      <div class="cards">
+        <div class="card"><div class="ic">🖥️</div><h3>Landing Page Siap</h3><p>Page jualan Mindtropic yang dah diuji. Anda terus hantar trafik iklan ke situ.</p></div>
+        <div class="card"><div class="ic">🎬</div><h3>Bahan Marketing</h3><p>Gambar, video dan copy iklan yang boleh terus guna. Tak perlu reka dari kosong.</p></div>
+        <div class="card"><div class="ic">👥</div><h3>Group Mentoring</h3><p>Tanya soalan, kongsi iklan anda dan dapatkan feedback daripada saya dan agent lain.</p></div>
+        <div class="card"><div class="ic">⚖️</div><h3>Sistem Adil HQ</h3><p>Struktur pangkat dan bonus yang sama untuk semua agent, diurus terus oleh pihak HQ Eskayvie.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LANGKAH ============ -->
+  <section class="steps">
+    <div class="wrap">
+      <h2>Macam Mana Nak Mula</h2>
+      <p class="sub">Empat langkah dari WhatsApp pertama hingga iklan pertama anda live.</p>
+      <div class="step-list">
+        <div class="step"><h3>WhatsApp saya</h3><p>Kita borak dulu. Saya terangkan modal, bajet iklan dan apa yang perlu dijangka.</p></div>
+        <div class="step"><h3>Daftar sebagai agent</h3><p>Pendaftaran melalui sistem Eskayvie Nexus. Saya bantu setiap langkah.</p></div>
+        <div class="step"><h3>Setup page dan iklan</h3><p>Anda dapat landing page dan bahan iklan. Kita set iklan pertama bersama.</p></div>
+        <div class="step"><h3>Uji dan tambah baik</h3><p>Pantau keputusan, kongsi dalam group, dan ubah iklan ikut data.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRODUK ============ -->
+  <section>
+    <div class="wrap">
+      <span class="tag" style="display:block;text-align:center">Produk Yang Anda Jual</span>
+      <h2>Mindtropic: Nutrisi Minda Untuk Keluarga</h2>
+      <p class="sub">Produk yang ibu bapa cari sendiri, jadi iklan anda bercakap dengan pembeli yang memang ada keperluan.</p>
+      <div class="prod">
+        <div class="card">
+          <div class="mtx-img">GAMBAR: Mindtropic</div>
+          <div><h3>Mindtropic</h3><p><span class="isi">[ISI: Penerangan ringkas dari website Mindtropic. Untuk siapa, bentuk produk, cara ambil.]</span></p></div>
+        </div>
+        <div class="card">
+          <div class="mtx-img">GAMBAR: Mindtropic Junior</div>
+          <div><h3>Mindtropic Junior</h3><p>Untuk kanak-kanak dan remaja umur 2 hingga 18 tahun. <span class="isi">[ISI: penerangan tambahan]</span></p></div>
+        </div>
+      </div>
+      <div class="trust">
+        <div><b>Kajian Klinikal</b>Kerjasama Eskayvie dengan Universiti Malaya</div>
+        <div><b>Halal</b><span class="isi">[ISI: no. sijil JAKIM]</span></div>
+        <div><b>Berdaftar</b><span class="isi">[ISI: no. MAL / NOT KKM]</span></div>
+        <div><b>Pengesahan Produk</b>Sistem semakan keaslian dari Eskayvie</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PELAN PEMASARAN ============ -->
+  <section class="plan">
+    <div class="wrap">
+      <span class="tag" style="display:block;text-align:center">Pelan Pemasaran</span>
+      <h2>Struktur, Bonus & Komisen</h2>
+      <p class="sub">Semakin tinggi pangkat, semakin tinggi peratus bonus. Pangkat pertama tiada minimum jualan.</p>
+      <div class="tbl">
+        <div class="row head"><div>Bonus</div><div>Pangkat</div><div class="req">Syarat Jualan</div></div>
+        <div class="row"><div class="pct">40%</div><div class="rank">Diamond Advisor</div><div class="req">Group Sale EPV150,000 · Personal Sale EPV3,000</div></div>
+        <div class="row"><div class="pct">37%</div><div class="rank">Sapphire Advisor</div><div class="req">Group Sale EPV70,000 · Personal Sale EPV3,000</div></div>
+        <div class="row"><div class="pct">35%</div><div class="rank">Gold Advisor</div><div class="req">Group Sale EPV30,000 · Personal Sale EPV2,000</div></div>
+        <div class="row"><div class="pct">30%</div><div class="rank">Silver Advisor</div><div class="req">Group Sale EPV10,000 · Personal Sale EPV1,000</div></div>
+        <div class="row"><div class="pct">25%</div><div class="rank">Bronze Advisor</div><div class="req">Group Sale EPV3,000 · Personal Sale EPV500</div></div>
+        <div class="row"><div class="pct">15%</div><div class="rank">Eskayvie Achiever</div><div class="req">Group Sale EPV1,000</div></div>
+        <div class="row"><div class="pct">10%</div><div class="rank">Eskayvie Apprentice</div><div class="req">Tiada minimum jualan</div></div>
+      </div>
+      <p class="note">Sumber: Pelan Pemasaran Eskayvie Nexus, Eskayvie Sdn Bhd. Saya terangkan maksud EPV dan cara kiraan bonus bila anda WhatsApp.</p>
+    </div>
+  </section>
+
+  <!-- ============ TOP EARNERS ============ -->
+  <section>
+    <div class="wrap">
+      <h2>Top Usahawan Eskayvie Nexus 2025</h2>
+      <p class="sub">Ini jumlah jualan kumpulan, bukan pendapatan peribadi. Ia menunjukkan skala yang boleh dicapai dalam sistem yang sama.</p>
+      <div class="earners">
+        <div class="earner"><div class="mtx-img">GAMBAR: Top 1</div><small>Top 1</small><h3><span class="isi">[ISI: Nama]</span></h3><b>RM34,784,959</b><br><small>Jumlah Jualan Kumpulan 2025</small></div>
+        <div class="earner"><div class="mtx-img">GAMBAR: Top 2</div><small>Top 2</small><h3><span class="isi">[ISI: Nama]</span></h3><b>RM13,007,710</b><br><small>Jumlah Jualan Kumpulan 2025</small></div>
+        <div class="earner"><div class="mtx-img">GAMBAR: Top 3</div><small>Top 3</small><h3><span class="isi">[ISI: Nama]</span></h3><b>RM9,070,169</b><br><small>Jumlah Jualan Kumpulan 2025</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="faq">
+    <div class="wrap">
+      <h2>Soalan Yang Selalu Ditanya</h2>
+      <p class="sub">Kalau soalan anda tiada di sini, terus WhatsApp.</p>
+      <details><summary>Berapa bajet iklan yang saya perlu sediakan?</summary><p>Saya cadangkan sekurang-kurangnya <span class="isi">[ISI: RMxx sehari / RMxxx sebulan]</span> untuk fasa ujian. Bajet ini berasingan daripada kos pendaftaran agent. Kalau bajet ini terlalu berat untuk anda sekarang, lebih baik tunggu dulu.</p></details>
+      <details><summary>Saya tak pernah buat iklan. Boleh ke?</summary><p>Boleh. Page ini memang untuk beginner. Anda dapat landing page dan bahan iklan yang siap, dan kita set iklan pertama bersama dalam group mentoring. Yang anda perlu bawa ialah masa untuk belajar dan pantau.</p></details>
+      <details><summary>Kalau iklan saya tak jadi, saya rugi ke?</summary><p>Bajet iklan yang dah dibelanjakan memang tak boleh diambil semula. Sebab itu kita mula dengan bajet kecil, uji beberapa iklan, dan hanya tambah bajet pada iklan yang menunjukkan hasil.</p></details>
+      <details><summary>Kena simpan stok ke?</summary><p><span class="isi">[ISI: Terangkan polisi stok dan modal permulaan agent]</span></p></details>
+      <details><summary>Ada target jualan wajib?</summary><p>Pangkat Eskayvie Apprentice tiada minimum jualan. Target hanya terpakai bila anda mahu naik pangkat untuk dapat peratus bonus yang lebih tinggi.</p></details>
+      <details><summary>Saya kerja full-time. Cukup masa ke?</summary><p>Iklan berjalan sendiri sepanjang hari. Masa anda digunakan untuk pantau keputusan, balas pelanggan dan ubah iklan. Ramai agent buat semua ini waktu malam. <span class="isi">[ISI: anggaran jam seminggu]</span></p></details>
+      <details><summary>Berapa lama sebelum saya nampak hasil?</summary><p>Bergantung pada bajet dan berapa cepat anda uji. Minggu-minggu awal biasanya digunakan untuk cari iklan yang menjadi. Saya tak akan janji tempoh tertentu.</p></details>
+      <details><summary>Produk ni halal ke?</summary><p><span class="isi">[ISI: Sahkan status halal dan nombor sijil]</span></p></details>
+    </div>
+  </section>
+
+  <!-- ============ CTA AKHIR ============ -->
+  <section class="final">
+    <div class="wrap">
+      <h2>Sedia Nak Mula Jual Mindtropic Guna Iklan?</h2>
+      <p class="sub">WhatsApp saya. Kita borak dulu pasal bajet dan matlamat anda sebelum anda buat apa-apa keputusan.</p>
+      <a class="btn" href="https://wa.me/60185887284?text=Hai%2C%20saya%20berminat%20nak%20jadi%20agent%20Mindtropic.%20Boleh%20share%20info%3F" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.3-.5 0-1 .2-3.2-.7-2.7-1.1-4.4-3.9-4.5-4-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>
+        WhatsApp Sekarang
+      </a>
+      <p class="btn-note">+60 18-588 7284</p>
+    </div>
+  </section>
+
+  <div class="foot">Mindtropic ialah produk Eskayvie Sdn Bhd. Hasil jualan dan pendapatan berbeza bagi setiap agent dan tidak dijamin.</div>
+
+  <a class="float" href="https://wa.me/60185887284?text=Hai%2C%20saya%20berminat%20nak%20jadi%20agent%20Mindtropic.%20Boleh%20share%20info%3F" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.3-.5 0-1 .2-3.2-.7-2.7-1.1-4.4-3.9-4.5-4-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>
+  </a>
+</div>
