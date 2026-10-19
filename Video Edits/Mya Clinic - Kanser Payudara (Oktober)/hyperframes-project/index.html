@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="ms" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Jakarta"; src: url("fonts/jakarta-500.woff2") format("woff2"); font-weight: 500; }
+      @font-face { font-family: "Jakarta"; src: url("fonts/jakarta-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "Jakarta"; src: url("fonts/jakarta-800.woff2") format("woff2"); font-weight: 800; }
+      @font-face { font-family: "Fraunces"; src: url("fonts/fraunces-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "Fraunces"; src: url("fonts/fraunces-600i.woff2") format("woff2"); font-weight: 600; font-style: italic; }
+      :root {
+        --ink: #11352c;
+        --deep: #0f4a3a;
+        --sage: #9fd8bc;
+        --mint: #eaf7f0;
+        --accent: #2f9e74;
+        --lav: #c9b8f2;
+        --warm: #ffd27a;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1080px; height: 1920px; overflow: hidden; background: #0d1f1a;
+        font-family: "Jakarta", "Inter", ui-sans-serif, system-ui, sans-serif;
+      }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+      .clip { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; pointer-events: none; }
+
+      /* footage */
+      #vwrap { position: absolute; inset: 0; overflow: hidden; }
+      #vzoom { position: absolute; inset: 0; transform-origin: 50% 36%; }
+      #vzoom video { width: 100%; height: 100%; object-fit: cover; display: block; }
+      #shade {
+        position: absolute; inset: 0;
+        background:
+          linear-gradient(180deg, rgba(8,30,24,0.55) 0%, rgba(8,30,24,0) 26%),
+          linear-gradient(0deg, rgba(8,30,24,0.62) 0%, rgba(8,30,24,0) 42%);
+      }
+
+      /* top-band cards */
+      .topcard {
+        position: absolute; left: 70px; right: 70px; top: 120px;
+        display: flex; flex-direction: column; align-items: center; text-align: center;
+      }
+      .kicker {
+        display: inline-block; padding: 14px 30px; border-radius: 999px;
+        background: var(--mint); color: var(--deep);
+        font-weight: 800; font-size: 34px; letter-spacing: 0.14em; text-transform: uppercase;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+      }
+      .big {
+        margin-top: 22px; color: #fff; font-family: "Fraunces", Georgia, serif; font-weight: 700;
+        font-size: 92px; line-height: 1.02; letter-spacing: -0.02em;
+        text-shadow: 0 6px 28px rgba(0,0,0,0.35);
+      }
+      .big em { font-style: italic; font-weight: 600; color: var(--sage); }
+      .sub {
+        margin-top: 14px; color: var(--mint); font-weight: 700; font-size: 40px;
+        text-shadow: 0 4px 18px rgba(0,0,0,0.4);
+      }
+      .line { display: block; overflow: hidden; padding: 0 16px 8px; }
+      .line > span { display: inline-block; }
+
+      /* chips (lower area, under captions) */
+      .chips { position: absolute; left: 80px; right: 80px; top: 1500px; display: flex; flex-direction: column; gap: 22px; align-items: center; }
+      .chip {
+        display: flex; align-items: center; gap: 22px;
+        padding: 20px 36px 20px 22px; border-radius: 30px;
+        background: rgba(255,255,255,0.94); color: var(--ink);
+        font-weight: 800; font-size: 44px; box-shadow: 0 14px 40px rgba(0,0,0,0.25);
+      }
+      .chip .ico {
+        width: 74px; height: 74px; border-radius: 22px; flex: none;
+        display: grid; place-items: center; background: var(--mint);
+      }
+      .chip.lav .ico { background: #efe9ff; }
+      .chip svg { width: 46px; height: 46px; }
+
+      /* "more common than we think" people row */
+      .people { margin-top: 20px; display: flex; gap: 14px; justify-content: center; }
+      .person { width: 52px; height: 80px; opacity: 0.35; }
+      .person svg { width: 100%; height: 100%; }
+
+      /* clinic badge */
+      .badge {
+        display: flex; align-items: center; gap: 22px; padding: 30px 46px;
+        border-radius: 34px; background: #fff; box-shadow: 0 18px 50px rgba(0,0,0,0.25);
+      }
+      .badge img { display: block; width: 540px; height: auto; }
+      .badge .mark {
+        width: 92px; height: 92px; border-radius: 28px; background: var(--accent);
+        display: grid; place-items: center;
+      }
+      .badge .mark svg { width: 56px; height: 56px; }
+      .badge .name { font-family: "Fraunces", Georgia, serif; font-weight: 700; font-size: 70px; color: var(--deep); letter-spacing: -0.01em; }
+      .invite { margin-top: 20px; color: #fff; font-weight: 700; font-size: 44px; text-shadow: 0 4px 18px rgba(0,0,0,0.45); }
+
+      /* captions */
+      #caps { position: absolute; left: 60px; right: 60px; top: 1260px; height: 200px; }
+      .cap {
+        position: absolute; left: 0; right: 0; top: 0; text-align: center;
+        font-weight: 800; font-size: 70px; line-height: 1.12; color: #fff;
+        text-shadow: 0 5px 0 rgba(10,40,32,0.55), 0 8px 26px rgba(0,0,0,0.45);
+        opacity: 0;
+      }
+      .cap .w { background-color: rgba(47,158,116,0); display: inline-block; margin: 0 9px; padding: 0 10px; border-radius: 16px; }
+      .cap .w.key { color: var(--warm); }
+
+      /* end card */
+      #endbg { position: absolute; inset: 0; background: linear-gradient(170deg, #e9f6ef 0%, #cfe9dc 55%, #b7dcc9 100%); }
+      #endcard { position: absolute; left: 80px; right: 80px; top: 0; height: 1920px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+      #endcard .heart { width: 150px; height: 150px; }
+      #endcard .eyebrow { margin-top: 40px; color: var(--accent); font-weight: 800; font-size: 34px; letter-spacing: 0.2em; text-transform: uppercase; }
+      #endcard .head { margin-top: 18px; font-family: "Fraunces", Georgia, serif; font-weight: 700; font-size: 104px; line-height: 1.02; color: var(--deep); }
+      #endcard .head em { font-style: italic; font-weight: 600; color: var(--accent); }
+      #endcard .rule { width: 160px; height: 8px; border-radius: 8px; background: #a98f3e; margin: 50px 0 40px; }
+      #endcard .clinic { display: block; width: 720px; height: auto; }
+      #wm, #wm2 { position: absolute; left: 50%; top: 34px; width: 230px; height: auto; margin-left: -115px; opacity: 0.9; }
+      #endcard .tag { margin-top: 12px; font-weight: 700; font-size: 36px; color: #3d6b5c; }
+    </style>
+    <style>
+      /* pink theme for Breast Cancer Awareness Month */
+      :root { --ink: #4a1630; --deep: #7a1f45; --sage: #ffc2da; --mint: #fff0f6; --accent: #d6457a; }
+      #shade {
+        background:
+          linear-gradient(180deg, rgba(60,10,35,0.55) 0%, rgba(60,10,35,0) 26%),
+          linear-gradient(0deg, rgba(60,10,35,0.62) 0%, rgba(60,10,35,0) 42%);
+      }
+      .cap { text-shadow: 0 5px 0 rgba(70,15,40,0.55), 0 8px 26px rgba(0,0,0,0.45); }
+      .cap .w { background-color: rgba(214,69,122,0); }
+      #endbg { background: linear-gradient(170deg, #fff3f8 0%, #fbd9e7 55%, #f5c1d6 100%); }
+      #endcard .tag { color: #8a4a64; }
+      #endcard .eyebrow { letter-spacing: 0.08em; font-size: 27px; white-space: nowrap; }
+      .ribbon-badge {
+        position: absolute; left: 50%; top: 1500px; width: 190px; height: 190px; margin-left: -95px;
+        border-radius: 50%; background: #fff; display: grid; place-items: center;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.25);
+      }
+      .ribbon-badge svg { width: 120px; height: 120px; }
+      #s-clinic .chips { top: 1470px; gap: 18px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="29.51" data-width="1080" data-height="1920" data-fps="30">
+
+      <!-- footage (pauses already cut out of clean.mp4) -->
+      <div id="vwrap">
+        <div id="vzoom">
+          <video id="vid" src="assets/clean.mp4" playsinline data-has-audio="true" data-start="0" data-duration="29.51" data-track-index="0"></video>
+        </div>
+        <div id="shade"></div>
+      </div>
+
+      <!-- brand watermark (hidden while the gold logo card is up) -->
+      <img id="wm" src="assets/logo-white.png" alt="Mya Clinic" data-start="0" data-duration="12.21" data-track-index="1" />
+      <img id="wm2" src="assets/logo-white.png" alt="Mya Clinic" data-start="22.9" data-duration="3.21" data-track-index="1" />
+
+      <!-- 1. hook: October is Breast Cancer Awareness Month -->
+      <div id="s-hook" class="clip" data-start="0" data-duration="5.47" data-track-index="2">
+        <div class="topcard">
+          <div class="kicker" id="h-k">Tahukah anda?</div>
+          <div class="big"><span class="line"><span id="h-1"><em>Oktober</em></span></span></div>
+          <div class="sub" id="h-2">Bulan Kesedaran Kanser Payudara</div>
+        </div>
+        <div class="ribbon-badge" id="ribbon"><svg viewBox="0 0 24 24"><path fill="#d6457a" d="M12 2c-2.2 0-4 1.8-4 4 0 1.5.8 3.2 1.9 5L5 20l3 1.5 4-6.3 4 6.3 3-1.5-4.9-9c1.1-1.8 1.9-3.5 1.9-5 0-2.2-1.8-4-4-4zm0 2c1.1 0 2 .9 2 2 0 .9-.6 2.2-2 4.3C10.6 8.2 10 6.9 10 6c0-1.1.9-2 2-2z"/></svg></div>
+      </div>
+
+      <!-- 2. preventable and treatable -->
+      <div id="s-prev" class="clip" data-start="5.47" data-duration="6.74" data-track-index="2">
+        <div class="topcard">
+          <div class="kicker" id="p-k">Kanser payudara &amp; serviks</div>
+          <div class="big">
+            <span class="line"><span id="p-1">Boleh <em>dicegah</em></span></span>
+            <span class="line"><span id="p-2">&amp; <em>dirawat</em></span></span>
+          </div>
+        </div>
+        <div class="chips">
+          <div class="chip" id="p-c1"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#d6457a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>Saringan awal</div>
+          <div class="chip" id="p-c2"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#d6457a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>Rawatan awal</div>
+        </div>
+      </div>
+
+      <!-- 3. Mya Clinic invites all women -->
+      <div id="s-clinic" class="clip" data-start="12.21" data-duration="10.69" data-track-index="2">
+        <div class="topcard">
+          <div class="kicker" id="k-k">Kami di</div>
+          <div class="badge" id="badge" style="margin-top:22px">
+            <img src="assets/logo-gold.png" alt="Mya Clinic" />
+          </div>
+          <div class="invite" id="invite">menjemput semua wanita</div>
+        </div>
+        <div class="chips">
+          <div class="chip" id="k-c1"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#d6457a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>Pemeriksaan payudara</div>
+          <div class="chip" id="k-c2"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#d6457a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>Pemeriksaan serviks</div>
+          <div class="chip" id="k-c3"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#d6457a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>Pengesanan HPV</div>
+        </div>
+      </div>
+
+      <!-- 4. book today -->
+      <div id="s-cta" class="clip" data-start="22.9" data-duration="3.21" data-track-index="2">
+        <div class="topcard" style="top:150px">
+          <div class="kicker" id="c-k">Jemput datang</div>
+          <div class="big">
+            <span class="line"><span id="c-1">Buat <em>janji temu</em></span></span>
+            <span class="line"><span id="c-2">hari ini</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- captions -->
+      <div id="s-caps" class="clip" data-start="0" data-duration="26.11" data-track-index="3">
+        <div id="caps"></div>
+      </div>
+
+      <!-- 5. end card -->
+      <div id="s-end" class="clip" data-start="26.11" data-duration="3.4" data-track-index="4">
+        <div id="endbg"></div>
+        <div id="endcard">
+          <svg class="heart" id="end-heart" viewBox="0 0 24 24"><path fill="#d6457a" d="M12 2c-2.2 0-4 1.8-4 4 0 1.5.8 3.2 1.9 5L5 20l3 1.5 4-6.3 4 6.3 3-1.5-4.9-9c1.1-1.8 1.9-3.5 1.9-5 0-2.2-1.8-4-4-4zm0 2c1.1 0 2 .9 2 2 0 .9-.6 2.2-2 4.3C10.6 8.2 10 6.9 10 6c0-1.1.9-2 2-2z"/></svg>
+          <div class="eyebrow" id="end-eb">Oktober · Bulan Kesedaran Kanser Payudara</div>
+          <div class="head" id="end-h">Buat janji temu <em>hari ini</em></div>
+          <div class="rule" id="end-rule"></div>
+          <img class="clinic" id="end-cl" src="assets/logo-gold.png" alt="Mya Clinic" />
+          <div class="tag" id="end-tag">Pemeriksaan payudara · Pemeriksaan serviks · Pengesanan HPV</div>
+        </div>
+      </div>
+
+      <!-- music + sfx -->
+      <audio id="sfx-01-bgm" src="assets/bgm.wav" data-start="0" data-duration="29.51" data-volume="0.16" data-fade-out="1.5" data-track-index="5"></audio>
+      <audio id="sfx-02-pop" src="assets/pop.wav" data-start="0.58" data-duration="0.14" data-volume="0.5" data-track-index="7"></audio>
+      <audio id="sfx-03-whoosh" src="assets/whoosh.wav" data-start="2.36" data-duration="0.55" data-volume="0.45" data-track-index="6"></audio>
+      <audio id="sfx-04-sparkle" src="assets/sparkle.wav" data-start="4.36" data-duration="1.0" data-volume="0.35" data-track-index="8"></audio>
+      <audio id="sfx-05-whoosh" src="assets/whoosh.wav" data-start="5.45" data-duration="0.55" data-volume="0.45" data-track-index="6"></audio>
+      <audio id="sfx-06-pop" src="assets/pop.wav" data-start="8.94" data-duration="0.14" data-volume="0.5" data-track-index="7"></audio>
+      <audio id="sfx-07-pop" src="assets/pop.wav" data-start="9.66" data-duration="0.14" data-volume="0.5" data-track-index="8"></audio>
+      <audio id="sfx-08-pop" src="assets/pop.wav" data-start="10.57" data-duration="0.14" data-volume="0.5" data-track-index="7"></audio>
+      <audio id="sfx-09-pop" src="assets/pop.wav" data-start="11.32" data-duration="0.14" data-volume="0.5" data-track-index="8"></audio>
+      <audio id="sfx-10-whoosh" src="assets/whoosh.wav" data-start="12.17" data-duration="0.55" data-volume="0.45" data-track-index="6"></audio>
+      <audio id="sfx-11-ding" src="assets/ding.wav" data-start="12.75" data-duration="1.6" data-volume="0.4" data-track-index="8"></audio>
+      <audio id="sfx-12-pop" src="assets/pop.wav" data-start="16.25" data-duration="0.14" data-volume="0.5" data-track-index="7"></audio>
+      <audio id="sfx-13-pop" src="assets/pop.wav" data-start="17.53" data-duration="0.14" data-volume="0.5" data-track-index="7"></audio>
+      <audio id="sfx-14-pop" src="assets/pop.wav" data-start="19.25" data-duration="0.14" data-volume="0.5" data-track-index="7"></audio>
+      <audio id="sfx-15-whoosh" src="assets/whoosh.wav" data-start="22.86" data-duration="0.55" data-volume="0.45" data-track-index="6"></audio>
+      <audio id="sfx-16-sparkle" src="assets/sparkle.wav" data-start="25.54" data-duration="1.0" data-volume="0.35" data-track-index="7"></audio>
+      <audio id="sfx-17-whoosh" src="assets/whoosh.wav" data-start="26.06" data-duration="0.55" data-volume="0.5" data-track-index="6"></audio>
+      <audio id="sfx-18-ding" src="assets/ding.wav" data-start="26.44" data-duration="1.6" data-volume="0.42" data-track-index="8"></audio>
+    </div>
+
+    <script>
+      // word timings (edited timeline), estimated from the Descript transcript + silence map
+      const WORDS = [["Hai.", 0.08, 0.36], ["Adakah", 0.587, 1.003], ["anda", 1.003, 1.314], ["tahu", 1.314, 1.626], ["bahawa", 1.626, 2.042], ["bulan", 2.042, 2.405], ["Oktober", 2.405, 2.873], ["merupakan", 2.873, 3.445], ["bulan", 3.445, 3.808], ["kesedaran", 3.808, 4.38], ["kanser", 4.38, 4.795], ["payudara?", 4.795, 5.367], ["Kedua-dua", 5.547, 6.107], ["kanser", 6.107, 6.514], ["payudara", 6.514, 7.023], ["dan", 7.023, 7.278], ["juga", 7.278, 7.583], ["kanser", 7.583, 7.991], ["serviks", 7.991, 8.609], ["dapat", 8.609, 8.965], ["dicegah", 8.965, 9.423], ["dan", 9.423, 9.678], ["dirawat", 9.678, 10.136], ["dengan", 10.196, 10.593], ["saringan", 10.593, 11.088], ["dan", 11.088, 11.336], ["rawatan", 11.336, 11.782], ["awal.", 11.782, 12.129], ["Kami", 12.289, 12.577], ["di", 12.577, 12.769], ["Mya", 12.769, 13.01], ["Clinic", 13.01, 13.394], ["menjemput", 13.394, 13.922], ["semua", 13.922, 14.259], ["wanita", 14.259, 14.643], ["untuk", 14.643, 14.979], ["mendapatkan", 14.979, 15.604], ["pemeriksaan", 15.604, 16.228], ["payudara", 16.268, 16.965], ["dan", 16.965, 17.233], ["juga", 17.233, 17.555], ["pemeriksaan", 17.555, 18.253], ["serviks", 18.253, 18.896], ["serta", 18.896, 19.272], ["pengesanan", 19.272, 19.916], ["HPV,", 19.916, 20.238], ["virus", 20.238, 20.774], ["yang", 20.774, 21.096], ["boleh", 21.136, 21.447], ["menyebabkan", 21.447, 22.025], ["kanser", 22.025, 22.381], ["serviks.", 22.381, 22.825], ["Jemput", 22.985, 23.291], ["datang", 23.291, 23.597], ["ke", 23.597, 23.75], ["Mya", 23.75, 23.942], ["Clinic", 23.942, 24.408], ["dan", 24.408, 24.599], ["buat", 24.599, 24.829], ["janji", 24.829, 25.097], ["temu", 25.097, 25.326], ["pada", 25.326, 25.556], ["hari", 25.556, 25.785], ["ini.", 25.785, 26.015]];
+      const KEY = new Set(["Oktober","kesedaran","payudara?","payudara","serviks","dicegah","dirawat","saringan","awal.","Mya","Clinic","wanita","HPV,","serviks.","janji","temu"]);
+      const HL = "214,69,122";
+
+      const tl = gsap.timeline({ paused: true });
+      const E = "power3.out";
+      const END = 26.11;
+
+      // ---- captions: groups of up to 3 words, broken on punctuation ----
+      const caps = document.getElementById("caps");
+      const groups = []; let g = [];
+      WORDS.forEach((w, i) => {
+        g.push(w);
+        const end = /[.,?]$/.test(w[0]) || g.length === 3 || (WORDS[i + 1] && WORDS[i + 1][1] - w[2] > 0.12);
+        if (end) { groups.push(g); g = []; }
+      });
+      if (g.length) groups.push(g);
+      groups.forEach((grp, gi) => {
+        const el = document.createElement("div");
+        el.className = "cap";
+        grp.forEach((w) => {
+          const s = document.createElement("span");
+          s.className = "w" + (KEY.has(w[0]) ? " key" : "");
+          s.textContent = w[0];
+          el.appendChild(s);
+        });
+        caps.appendChild(el);
+        const t0 = grp[0][1];
+        const t1 = groups[gi + 1] ? groups[gi + 1][0][1] : Math.min(grp[grp.length - 1][2] + 0.3, END - 0.05);
+        tl.fromTo(el, { opacity: 0, y: 26, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.16, ease: "back.out(2)" }, t0);
+        tl.set(el, { opacity: 0 }, t1);
+        [...el.children].forEach((s, k) => {
+          const base = s.classList.contains("key") ? "#ffd27a" : "#ffffff";
+          tl.set(s, { backgroundColor: "rgba(" + HL + ",1)", color: "#ffffff" }, grp[k][1]);
+          tl.set(s, { backgroundColor: "rgba(" + HL + ",0)", color: base }, grp[k][2] + 0.02);
+        });
+      });
+
+      // ---- punch-in zooms on every jump cut ----
+      const cuts = [[0,1.0],[0.48,1.1],[5.47,1.0],[8.26,1.12],[12.21,1.0],[16.82,1.1],[18.49,1.0],[20.5,1.12],[22.9,1.0],[24.2,1.1]];
+      cuts.forEach(([t, s], i) => {
+        const next = cuts[i + 1] ? cuts[i + 1][0] : END;
+        tl.set("#vzoom", { scale: s }, t);
+        tl.to("#vzoom", { scale: s + 0.035, duration: next - t, ease: "none" }, t);
+      });
+      tl.to("#vzoom", { scale: 1.2, duration: 0.8, ease: "power2.in" }, END);
+
+      // helpers
+      const rise = (sel, t, d = 0.55) => tl.fromTo(sel, { yPercent: 110 }, { yPercent: 0, duration: d, ease: E }, t);
+      const pop = (sel, t) => tl.fromTo(sel, { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2.2)" }, t);
+      const slide = (sel, t, dir = -1) => tl.fromTo(sel, { x: 140 * dir, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "back.out(1.6)" }, t);
+      const out = (sel, t) => tl.to(sel, { opacity: 0, y: -30, duration: 0.25, ease: "power2.in" }, t);
+      const fade = (sel, t) => tl.fromTo(sel, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.4, ease: E }, t);
+
+      // 1. hook
+      pop("#h-k", 0.58);
+      rise("#h-1", 2.38);
+      fade("#h-2", 3.79);
+      tl.fromTo("#ribbon", { scale: 0, rotation: -25 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, 4.36);
+      tl.to("#ribbon", { scale: 1.08, duration: 0.3, yoyo: true, repeat: 1, ease: "sine.inOut" }, 4.96);
+      out("#s-hook .topcard", 5.25); out("#ribbon", 5.25);
+
+      // 2. preventable & treatable
+      pop("#p-k", 5.53);
+      rise("#p-1", 8.94); rise("#p-2", 9.66);
+      slide("#p-c1", 10.57, -1); slide("#p-c2", 11.32, 1);
+      out("#s-prev .topcard", 11.98); out("#s-prev .chips", 11.98);
+
+      // 3. Mya Clinic invites all women
+      pop("#k-k", 12.27);
+      tl.fromTo("#badge", { y: -60, opacity: 0, scale: 0.8 }, { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "back.out(2)" }, 12.75);
+      fade("#invite", 13.39);
+      slide("#k-c1", 16.25, -1); slide("#k-c2", 17.53, 1); slide("#k-c3", 19.25, -1);
+      out("#s-clinic .topcard", 22.68); out("#s-clinic .chips", 22.68);
+
+      // 4. book today
+      pop("#c-k", 22.96);
+      rise("#c-1", 24.58); rise("#c-2", 25.54);
+
+      // 5. end card
+      tl.fromTo("#endbg", { clipPath: "circle(0% at 50% 40%)" }, { clipPath: "circle(120% at 50% 40%)", duration: 0.7, ease: "power2.inOut" }, END);
+      tl.fromTo("#end-heart", { scale: 0, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.5)" }, END + 0.35);
+      tl.to("#end-heart", { scale: 1.1, duration: 0.35, yoyo: true, repeat: 3, ease: "sine.inOut" }, END + 1.0);
+      tl.fromTo("#end-eb", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: E }, END + 0.5);
+      tl.fromTo("#end-h", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: E }, END + 0.6);
+      tl.fromTo("#end-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: E }, END + 1.0);
+      tl.fromTo("#end-cl", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45, ease: E }, END + 1.15);
+      tl.fromTo("#end-tag", { opacity: 0 }, { opacity: 1, duration: 0.45 }, END + 1.35);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
