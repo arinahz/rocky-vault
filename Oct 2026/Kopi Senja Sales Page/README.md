@@ -2,14 +2,14 @@
 
 `index.html` ialah satu fail lengkap. Gambar sudah dimasukkan dalam fail, jadi boleh terus upload ke mana-mana hosting.
 
-## Wajib tukar sebelum live
+## Wajib tukar sebelum live: borang Heresell
 
-Cari blok `TUKAR DI SINI` di bahagian bawah `index.html`:
+Semua butang "Beli Sekarang" bawa pembeli ke bahagian "Borang order" di bawah pakej. Pilih satu cara:
 
-- `WHATSAPP_NUMBER`: nombor WhatsApp, format `60123456789`
-- `SHOPEE_URL`: pautan produk Shopee
+- **Pilihan A (pautan):** cari blok `TUKAR DI SINI` di bawah `index.html`, masukkan pautan borang Heresell dalam `HERESELL_FORM_URL`. Borang akan dipaparkan dalam page, dengan pautan sandaran "Borang tak keluar? Tekan sini" di bawahnya.
+- **Pilihan B (kod embed):** jika Heresell beri kod embed, tampal dalam `<div id="heresell-slot">` dan tukar `HERESELL_FORM_URL` kepada `""`.
 
-Butang WhatsApp akan buka chat dengan mesej siap ditulis, contoh "Hai Kopi Senja, saya nak order 3 botol (RM119)."
+Selepas live, buka page di telefon dan cuba sekali order. Sesetengah platform menyekat borang daripada dipaparkan dalam page lain. Jika borang kosong, pautan sandaran masih berfungsi, atau tanya Heresell tentang kod embed.
 
 ## Struktur (setiap bahagian jawab satu soalan pembeli)
 
@@ -20,6 +20,7 @@ Butang WhatsApp akan buka chat dengan mesej siap ditulis, contoh "Hai Kopi Senja
 | Cara buat | Susah ke nak buat |
 | 5 sebab | Kenapa patut tukar |
 | Pilih pakej | Berapa saya bayar, apa saya dapat |
+| Borang order (Heresell) | Macam mana nak beli |
 | Soalan lazim | Keraguan terakhir |
 
 Janji sama dengan video iklan: kos kopi cafe, siap 30 saat, tiada gula tambahan, 3 botol RM119 penghantaran percuma.
