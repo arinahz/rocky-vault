@@ -121,6 +121,19 @@
 .msp .bar .meta b { display: block; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
 .msp .bar .btn { width: auto; min-height: 46px; padding: 0 20px; }
 
+@media (max-width: 759px) {
+  .msp .hero-grid { grid-template-columns: 112px 1fr; gap: 14px 16px; grid-template-areas: "eye eye" "h1 h1" "cover sub" "cover price" "btn btn" "facts facts"; }
+  .msp .hero .stack { display: contents; }
+  .msp .hero .cover { grid-area: cover; width: 100%; margin: 0; align-self: start; }
+  .msp .hero .eyebrow { grid-area: eye; }
+  .msp .hero h1 { grid-area: h1; }
+  .msp .hero .sub { grid-area: sub; font-size: .95rem; line-height: 1.5; }
+  .msp .hero .arabic { display: none; }
+  .msp .hero .price-row { grid-area: price; align-self: end; gap: 6px 10px; }
+  .msp .hero .price { font-size: 1.6rem; }
+  .msp .hero .btn { grid-area: btn; }
+  .msp .hero .facts { grid-area: facts; }
+}
 @media (min-width: 760px) {
   .msp .hero-grid { grid-template-columns: 250px 1fr; align-items: center; gap: 36px; }
   .msp .cover { width: 100%; }
@@ -149,7 +162,7 @@
       <div class="stack">
         <p class="eyebrow">Untuk ibu dan ayah yang anaknya pergi dahulu</p>
         <h1 id="h-hero">Tangan masih ingat beratnya. Hati belum tahu cara melepaskannya.</h1>
-        <p class="muted">Kitab penawar hati yang ditulis seorang ulama hadis Damsyik hampir 600 tahun lalu, khusus untuk ibu bapa yang kehilangan anak. Kini dalam bahasa Melayu.</p>
+        <p class="muted sub">Kitab penawar hati yang ditulis seorang ulama hadis Damsyik hampir 600 tahun lalu, khusus untuk ibu bapa yang kehilangan anak. Kini dalam bahasa Melayu.</p>
         <p class="arabic" lang="ar">كتاب برد الأكباد عند فقد الأولاد</p>
         <div class="price-row">
           <span class="price">RM27.00</span>
