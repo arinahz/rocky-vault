@@ -1,102 +1,79 @@
 ---
 name: prop-metaphor-ugc-ad
-description: Write and shot-list a 30 to 50 second vertical UGC ad where a creator physically destroys labelled props, one per customer problem, then reveals a bundle that solves all of them. Use for multi-SKU bundles, kits, or any offer that answers several separate pains.
+description: Script and shot-list a 30-50s vertical creator ad where each customer pain is a labelled prop the creator destroys on camera, ending with one offer that covers every pain. Use for bundles, kits, or multi-feature offers with 3-5 nameable pains.
 ---
 
-# Prop-Metaphor UGC Ad ("one problem, one pop")
+# Prop-Metaphor UGC Ad (V2)
 
-## When to use
-- The offer solves 3 to 5 distinct, nameable pains (symptoms, chores, objections).
-- Each pain maps to one product, ingredient, or feature.
-- There is a bundle, kit, or single price that covers all of them.
-Skip it for single-benefit products. The format depends on repetition.
+## Core logic (do not break)
+- **Destruction = proof.** The pain is "gone" only when its prop is visibly and audibly destroyed in under 1s by the creator's hand. That moment carries the claim, so the VO stays soft.
+- **Repetition builds prediction.** Same line template, same tool, same chip in every beat. Viewers anticipate the payoff, and that keeps them watching.
+- **Location changes reset attention.** Every cut moves to a new spot or angle while the creator's outfit stays identical.
+- **Framing tightens toward the sale.** The hook is the widest shot and the CTA is the tightest.
 
-## Inputs to collect
-1. Audience you address in line one ("Okay ladies", "Right, new dads", "Founders").
-2. Topic word for the pun hook.
-3. 3 to 5 pairs of PAIN -> SOLUTION (short benefit in brackets).
-4. Bundle name, item names, price.
-5. Emotional end-state ("feel like you again", "get your evenings back").
+## Gate
+Use only if: 3-5 distinct pains, each mapped to one product or feature, and one offer/price covering all of them. Otherwise stop and pick another format.
 
-## Structure (target 45s, 6 to 9 shots)
-| # | Beat | Time | Shot | Words |
-|---|------|------|------|-------|
-| 1 | Hook + setup | 0-5s | Wide, creator kneels behind all labelled props in a row, holds the "pin" | Audience call-out + pun + "one ___ at a time" |
-| 2-5 | Problem/solution loop | ~4-5s each | New angle and new spot per prop. Creator holds prop, names pain as a question, names fix, destroys prop | "[Pain]? [Solution] for [benefit]." |
-| 6 | Pivot + reveal | 23-38s | Medium, creator holds all products fanned toward lens, debris of props on ground | "And instead of buying all ___ separately, you get them together in one bundle:" then list names, then price |
-| 7 | Close + CTA | 38-45s | Tight selfie close-up, new background, products just below face | "Everything ___ throws at you in one little ___." + end-state + "Link's below" |
+## Inputs
+`audience` · `topic` · `pains[]` (each: pain, solution, 1-word benefit) · `offer name` · `price` · `end_state` (how the viewer feels after)
 
-## Rules
+## Design the prop system first
+1. Pick ONE destruction tool and ONE prop type. The tool must support a pun on `topic` that is literally true on screen.
+   | Prop | Tool | Pun pattern |
+   |---|---|---|
+   | water balloons | pin | "put a pin in ___" |
+   | block tower | flick/push | "knock out ___" |
+   | paper signs | hands | "tear up ___" |
+   | chalk words | hose/sponge | "wash away ___" |
+2. Hand-write each pain on its prop: thick black marker, caps, 1-3 words.
+3. Give each prop a different saturated colour. Product packaging and props are the only designed colour in frame.
+4. Order pains: most relatable first, best destruction visual last.
 
-### Concept
-- One prop = one pain. Write the pain on the prop by hand in thick black marker, 1 to 3 words, caps.
-- Props must be destroyable on camera with a satisfying physical payoff (water balloons popping, sticky notes torn, sandcastle kicked, tower knocked). The destruction is the "solution lands" moment.
-- Prop colours: one loud, saturated colour per pain (green, white, orange, pink). Never repeat a colour.
-- The pun in the hook names the tool you use ("put a pin in", "knock out", "pop", "tear up") and must make literal sense with the prop.
+## Shot structure
+Runtime ≈ 5 + (4.5 × pains) + 12 + 7 seconds.
 
-### Shooting
-- Phone, vertical 9:16, natural daylight, handheld or propped. No studio lights, no gimbal moves.
-- One location (garden, kitchen, living room) but change the spot and angle for every beat so each cut feels fresh: kneeling wide, standing full-body, low angle, selfie close-up.
-- Creator wardrobe is identical across all clips (one bold, simple pattern reads as continuity). Same glasses, jewellery, hair.
-- Shot sizes escalate toward intimacy: wide at hook, medium in the loop, tight face at CTA.
-- Leave props' debris visible on the ground in the reveal shot. It proves the "payoff" happened.
-- Look into the lens for most lines. Gesture with the free hand on each key word.
+| Beat | Length | Framing | Action | VO |
+|---|---|---|---|---|
+| Hook | ≤5s | Wide. All props lined up in front of creator, tool in hand | Show tool | "[Audience], let's talk about [topic], one [pain-unit] at a time." |
+| Loop ×N | 3.5-5s each | Medium, new spot each | Hold prop to lens, destroy on last word | "[Pain]? [Solution] for [benefit]." |
+| Reveal | 10-15s, longest shot | Medium, all products fanned to lens, prop debris visible | Tap each product as named | "Instead of [fragmented/costly alternative], you get them together in one [offer]: [names in loop order]. [Price]." |
+| Close | 5-8s, tightest shot | Selfie close-up, products under chin, new background | Direct eye contact | "Everything [topic] throws at you in one [offer]. [End_state]... link's below." |
 
-### Editing
-- Hard cuts only. No transitions, no zooms, no B-roll, no stock.
-- Cut on the pop: end each loop shot 0.3 to 0.5s after the burst, never before it.
-- One take per beat; trim dead air at both ends. Each loop shot runs 3.5 to 5s.
-- The reveal is the longest shot (10 to 15s). Hold it while the products are named.
-- Final shot holds 1 to 2s after the last word so the CTA overlay can be read.
+Loop rule: one beat may drop the question and state only the fix, to break monotony. Never more than one.
 
-### Typography (two text layers, nothing else)
-1. Spoken captions: white, bold rounded sans (TikTok Classic / Proxima-style), thin dark shadow, centered, lower-middle of frame (about 55 to 60% down), 1 to 2 lines, one sentence per card, sentence case, real punctuation. Auto-generate, then fix spelling.
-2. Label chips: small black text on a pale yellow (#FFF6B0-ish) rounded rectangle, placed just above the caption.
-   - Hook title chip (large, 2 lines, upper-middle): the pun. Shows for the first ~2.5s only.
-   - Loop chips (small, one line): "Pain · Solution (benefit)". Appear about 1s after the shot starts, stay until the cut.
-   - Offer chip during reveal: "N items · 1 bundle" + price on line 2.
-   - CTA chip on the final shot (large, top of frame): "[End-state]· Link below".
-- Use a middle dot (·) as the separator in every chip. Keep the same chip style in every shot.
-- Max one emoji in the whole video: ⬇️ after "Link's below".
+## Capture
+- Phone, 9:16, daylight, one home location. No studio light, gimbal, or camera moves.
+- Identical wardrobe across all takes. Pick one bold, simple pattern so cuts read as one session.
+- Eyes to lens on every line. The free hand gestures on the pain word.
+- Record a full take per beat. Destroy the prop only once the line is complete.
 
-### Colour and look
-- Real, ungraded phone colour. Greens of foliage, warm skin, red brick or wood.
-- Saturated props and packaging are the only "designed" colour. Everything else stays natural.
-- Pale yellow chips are the single brand-neutral accent colour.
+## Edit
+- Hard cuts only. No transitions, zooms, B-roll, stock, or punch-ins.
+- Trim dead air at both ends. Cut 0.3-0.5s after each destruction, never before it.
+- Hold the final frame 1-2s after the last word.
 
-### Voice and sound
-- Creator's own voice, recorded on the phone mic, live with the picture. No separate voiceover booth sound.
-- Warm, chatty, peer-to-peer tone. Speaks like a friend who has been through it, not like a brand.
-- Loop lines follow one template: "[Pain as a question]? [Solution] for [simple benefit]." Keep them under 10 words.
-- No music bed, or a very low one (under -25 dB) at most. The diegetic pops, splashes, and laughs are the sound design.
-- Keep the real pop/splash audio loud. Do not add fake SFX on top.
+## On-screen text (exactly two styles)
+1. **Captions:** every spoken sentence. White bold rounded sans, light shadow, centred at 55-60% frame height, max 2 lines, sentence case.
+2. **Chips:** dark text on one pale accent fill, rounded, placed directly above captions. Use `·` as the separator.
+   - Hook (large, 0-2.5s): the pun.
+   - Loop (small, enters ~1s into the shot, stays to the cut): `Pain · Solution (benefit)`.
+   - Reveal (on for the full shot): `N items · 1 [offer]` / `[price]`.
+   - Close (large, top third): `[End_state]· Link below`.
+- Max one emoji in the video: ⬇️ after the CTA caption.
 
-### Claims and compliance
-- Use soft benefit words ("help you feel calm", "for everyday comfort", "clearer head"). Never "cures", "treats", "fixes" for health products.
-- State price once in VO and keep it on screen through the reveal.
+## Sound
+- Sync audio from the phone mic. No separate voiceover.
+- No music, or a bed under -25 dB. Keep the real destruction sound at full level and add no stock SFX.
+- Delivery: peer talking to peer, casual, one take per line, small imperfections kept.
 
-## Script template
-```
-[HOOK CHIP]   Let's [pun verb] in [topic]
-VO 1          [Audience], let's talk about [topic], one [pain-unit] at a time.
-VO 2..n       [Pain]? [Solution] for [benefit].          CHIP: [Pain] · [Solution] ([benefit word])
-              (destroy prop, cut)
-VO pivot      And instead of buying all [n] separately, you get them together in one [bundle word]:
-VO list       [Item 1], [Item 2], [Item 3] and [Item 4]. [Price].
-              CHIP: [n] [items] · 1 [bundle word] / [price]
-VO close      Everything [topic] throws at you in one little [bundle word].
-VO CTA        [End-state]... Link's below ⬇️
-[CTA CHIP]    [End-state, with YOU or a key word in caps]· Link below
-```
+## Claims
+- Soft benefit verbs ("help you feel", "for everyday", "support"). Never "cure", "fix", "treat", or guarantees.
+- Say the price once and keep it on screen through the reveal.
 
-## Output checklist
-- [ ] Every pain has a labelled, coloured, destroyable prop
-- [ ] Hook names the audience, contains a pun tied to the prop, and promises "one at a time"
-- [ ] 3 to 5 loop beats, each in a new spot, each ending on a destruction
-- [ ] Loop VO uses the same sentence template every time
-- [ ] Reveal shows all products, debris visible, price spoken and on screen
-- [ ] Final shot is the tightest framing in the video, with a CTA chip
-- [ ] Only two text styles used (white captions, yellow chips)
-- [ ] No transitions, no stock, no studio light, no heavy music
-- [ ] Runtime 35 to 50s
-- [ ] All wording, props, and puns are new. Do not reuse the source's menopause/balloon/pin content
+## Ship check
+- [ ] Pun matches the tool on screen
+- [ ] Every loop beat: new spot, same template, ends on destruction
+- [ ] Reveal is the longest shot and shows debris
+- [ ] Close is the tightest shot
+- [ ] Only captions + chips; no other graphics
+- [ ] Topic, props, pun, and lines are new, not borrowed from any reference
