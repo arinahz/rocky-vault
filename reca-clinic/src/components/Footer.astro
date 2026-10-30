@@ -1,0 +1,39 @@
+---
+import { clinic } from '../data/clinic';
+import { telLink } from '../lib/whatsapp';
+
+interface Props {
+  disclaimer?: string;
+}
+const { disclaimer } = Astro.props;
+
+const links = [
+  { href: '/perkhidmatan/', label: 'Perkhidmatan' },
+  { href: '/doktor/', label: 'Doktor' },
+  { href: '/ulasan/', label: 'Ulasan' },
+  { href: '/hubungi/', label: 'Hubungi' },
+  { href: '/dasar-privasi/', label: 'Dasar Privasi' },
+];
+---
+
+<footer class="bg-footer pb-28 text-sm text-slate-300 md:pb-10">
+  <div class="mx-auto flex max-w-6xl flex-col gap-5 px-4 pt-8 md:flex-row md:justify-between md:gap-10">
+    <div class="flex flex-col gap-4">
+      <div class="flex items-center gap-2.5">
+        <span class="flex size-8 items-center justify-center rounded-[9px] bg-white font-extrabold text-footer">R</span>
+        <span class="text-[17px] font-extrabold text-white">{clinic.name}</span>
+      </div>
+      <p class="leading-relaxed">
+        {clinic.address}<br />
+        Tel: <a href={telLink} data-track="contact" class="text-slate-200">{clinic.phoneDisplay}</a>
+      </p>
+    </div>
+    <nav aria-label="Pautan kaki" class="grid grid-cols-2 gap-x-3 gap-y-1 md:grid-cols-1">
+      {links.map((l) => <a href={l.href} class="flex min-h-9 items-center text-slate-200 no-underline hover:text-white">{l.label}</a>)}
+    </nav>
+  </div>
+  <p class="mx-auto mt-5 max-w-6xl px-4 text-xs leading-relaxed text-slate-400">
+    No. kelulusan iklan KKLIU: {clinic.kkliuNumber}. {disclaimer ?? 'Maklumat di laman ini adalah untuk rujukan umum dan bukan pengganti konsultasi dengan doktor.'}<br />
+    © {new Date().getFullYear()} {clinic.name}
+  </p>
+</footer>

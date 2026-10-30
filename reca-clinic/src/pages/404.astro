@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import { clinic } from '../data/clinic';
+---
+
+<BaseLayout title={`Halaman tidak dijumpai | ${clinic.name}`} description="Halaman yang anda cari tidak wujud.">
+  <section class="mx-auto max-w-xl px-4 py-16 text-center">
+    <h1 class="mb-3 text-3xl font-extrabold">Halaman tidak dijumpai</h1>
+    <p class="mb-6 text-body">Pautan ini mungkin telah berubah. Kembali ke laman utama atau tanya kami terus di WhatsApp.</p>
+    <div class="flex flex-col gap-2.5">
+      <a href="/" class="flex h-12 items-center justify-center rounded-xl bg-tint font-bold text-brand no-underline">Ke laman utama</a>
+      <WhatsAppButton />
+    </div>
+  </section>
+</BaseLayout>

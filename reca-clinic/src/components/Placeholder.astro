@@ -1,0 +1,18 @@
+---
+// Grey box shown where a real photo is still missing. Swap for <Image> once photos arrive.
+interface Props {
+  label: string;
+  class?: string;
+}
+import Icon from './Icon.astro';
+const { label, class: className } = Astro.props;
+---
+
+<div
+  role="img"
+  aria-label={label}
+  class:list={['flex flex-col items-center justify-center gap-2 rounded-[18px] bg-placeholder p-4 text-center text-[13px] font-semibold text-muted', className]}
+>
+  <Icon name="image" size={32} strokeWidth={1.6} />
+  {label}
+</div>

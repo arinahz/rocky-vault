@@ -1,0 +1,28 @@
+---
+import Icon from './Icon.astro';
+import { waLink } from '../lib/whatsapp';
+
+interface Props {
+  topic?: string;
+  label?: string;
+  variant?: 'solid' | 'inverse';
+  class?: string;
+}
+
+const { topic, label = 'WhatsApp Kami', variant = 'solid', class: className } = Astro.props;
+---
+
+<a
+  href={waLink(topic)}
+  target="_blank"
+  rel="noopener"
+  data-track="lead"
+  class:list={[
+    'flex h-[54px] items-center justify-center gap-2.5 rounded-[14px] px-6 text-[17px] font-bold no-underline transition-colors',
+    variant === 'solid' ? 'bg-wa text-white hover:bg-wa-dark' : 'bg-white font-extrabold text-[#14532d] hover:bg-tint',
+    className,
+  ]}
+>
+  <Icon name="chat" class={variant === 'inverse' ? 'text-wa' : undefined} />
+  {label}
+</a>

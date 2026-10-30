@@ -1,0 +1,194 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import Placeholder from '../components/Placeholder.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import FaqList from '../components/FaqList.astro';
+import { clinic, services, doctors, reviews, faqs } from '../data/clinic';
+import { telLink } from '../lib/whatsapp';
+
+const trust = [
+  { icon: 'shield', title: 'Klinik berdaftar KKM', sub: `No. ${clinic.kkmNumber}` },
+  { icon: 'user', title: 'Doktor berdaftar MMC', sub: clinic.doctorCount },
+  { icon: 'clock', title: 'Waktu operasi', sub: clinic.hoursShort },
+  { icon: 'pin', title: 'Mudah dicari', sub: clinic.landmark },
+] as const;
+
+const steps = [
+  { title: 'Hantar mesej WhatsApp', text: 'Mesej sudah disediakan. Tekan hantar, atau tambah soalan anda.' },
+  { title: 'Sahkan tarikh dan masa', text: 'Staf kami akan cadangkan slot yang ada dan jawab soalan tentang kos.' },
+  { title: 'Datang ke klinik', text: 'Bawa kad pengenalan. Kami akan hantar lokasi dan arah parkir.' },
+];
+
+const doctor = doctors[0];
+---
+
+<BaseLayout
+  title={`${clinic.name} | Klinik di ${clinic.area}`}
+  description={`Buat temujanji di ${clinic.name}, ${clinic.area} melalui WhatsApp. Lihat perkhidmatan, doktor, waktu operasi dan lokasi klinik.`}
+>
+  <!-- Hero -->
+  <section class="bg-tint">
+    <div class="mx-auto grid max-w-6xl gap-6 px-4 pt-7 pb-8 md:grid-cols-2 md:items-center md:gap-12 md:py-16">
+      <div>
+        <p class="mb-3 inline-flex items-center gap-2 rounded-full border border-placeholder bg-white px-3 py-1.5 text-[13px] font-semibold text-brand">
+          <span class="size-2 rounded-full bg-wa"></span>Buka hari ini · {clinic.hoursToday}
+        </p>
+        <h1 class="mb-3 text-[32px] leading-[1.15] font-extrabold tracking-[-0.02em] md:text-5xl">
+          Temujanji doktor di {clinic.area}, terus melalui WhatsApp.
+        </h1>
+        <p class="mb-6 text-base leading-relaxed text-body md:text-lg">
+          Beritahu kami apa yang anda perlukan. Pasukan kami akan bantu pilih slot yang sesuai dan jawab soalan anda sebelum anda datang.
+        </p>
+        <div class="flex flex-col gap-2.5 md:flex-row">
+          <WhatsAppButton />
+          <a href={telLink} data-track="contact" class="flex h-[50px] items-center justify-center rounded-[14px] border-[1.5px] border-line-strong bg-white px-6 text-base font-bold text-brand no-underline md:h-[54px]">
+            Telefon {clinic.phoneDisplay}
+          </a>
+        </div>
+        <p class="mt-3 text-center text-[13px] text-muted md:text-left">Mesej dibalas dalam waktu operasi klinik.</p>
+      </div>
+      <Placeholder label="[TODO: Foto sebenar kaunter / bilik rawatan]" class="h-[210px] md:h-[380px]" />
+    </div>
+  </section>
+
+  <!-- Trust strip -->
+  <section class="border-b border-line">
+    <div class="mx-auto grid max-w-6xl grid-cols-2 gap-2.5 px-4 py-6 md:grid-cols-4">
+      {
+        trust.map((t) => (
+          <div class="flex flex-col gap-1.5 rounded-2xl border border-line p-3.5">
+            <Icon name={t.icon} class="text-brand" />
+            <span class="text-sm font-bold">{t.title}</span>
+            <span class="text-xs text-muted">{t.sub}</span>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="mx-auto max-w-6xl px-4 pt-10 pb-8 md:py-16">
+    <SectionHeading eyebrow="Perkhidmatan" title="Apa yang boleh kami bantu" />
+    <div class="grid gap-2.5 md:grid-cols-2">
+      {services.slice(0, 4).map((s, i) => <ServiceCard service={s} index={i} />)}
+    </div>
+    <a href="/perkhidmatan/" class="mt-4 flex h-12 items-center justify-center rounded-xl bg-tint text-[15px] font-bold text-brand no-underline md:inline-flex md:px-8">
+      Lihat semua perkhidmatan
+    </a>
+  </section>
+
+  <!-- How it works -->
+  <section class="bg-tint">
+    <div class="mx-auto max-w-6xl px-4 py-9 md:py-16">
+      <SectionHeading title="Cara buat temujanji" />
+      <ol class="grid gap-3.5 md:grid-cols-3">
+        {
+          steps.map((s, i) => (
+            <li class="flex items-start gap-3.5 rounded-2xl bg-white p-4">
+              <span class="flex size-[34px] flex-none items-center justify-center rounded-full bg-brand font-extrabold text-white">{i + 1}</span>
+              <span class="flex flex-col gap-1">
+                <span class="text-base font-bold">{s.title}</span>
+                <span class="text-sm leading-normal text-muted">{s.text}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Doctor -->
+  <section class="mx-auto max-w-6xl px-4 py-10 md:py-16">
+    <SectionHeading eyebrow="Doktor kami" title="Kenali doktor yang akan merawat anda" />
+    <div class="overflow-hidden rounded-[18px] border border-line md:grid md:grid-cols-[320px_1fr]">
+      <Placeholder label="[TODO: Foto profesional doktor]" class="h-[260px] rounded-none md:h-full" />
+      <div class="flex flex-col gap-1.5 p-[18px] md:p-8">
+        <span class="text-[19px] font-extrabold">{doctor.name}</span>
+        <span class="text-sm font-semibold text-brand">{doctor.qualifications}</span>
+        <span class="text-[13px] text-muted">No. MMC: {doctor.mmc}</span>
+        <p class="mt-2 text-sm leading-relaxed text-body">{doctor.bio}</p>
+      </div>
+    </div>
+    <a href="/doktor/" class="mt-4 inline-flex min-h-11 items-center gap-1.5 text-[15px] font-bold text-brand no-underline">
+      Lihat semua doktor<Icon name="chevron" size={18} />
+    </a>
+  </section>
+
+  <!-- Reviews -->
+  <section class="border-y border-line bg-slate-50">
+    <div class="mx-auto max-w-6xl px-4 py-9 md:py-16">
+      <h2 class="mb-2 text-[25px] leading-tight font-extrabold md:text-[32px]">Ulasan pesakit di Google</h2>
+      <div class="mb-5 flex items-center gap-2">
+        <span class="text-amber-700"><Icon name="star" size={18} /></span>
+        <span class="text-[15px] font-bold">{clinic.google.rating}</span>
+        <span class="text-sm text-muted">daripada {clinic.google.reviewCount} ulasan</span>
+      </div>
+      <div class="grid gap-3 md:grid-cols-2">
+        {
+          reviews.map((r) => (
+            <figure class="rounded-2xl border border-line bg-white p-[18px]">
+              <blockquote class="mb-3 text-[15px] leading-relaxed text-gray-800">“{r.quote}”</blockquote>
+              <figcaption class="text-[13px] text-muted">
+                <span class="font-bold text-ink">{r.name}</span> · Ulasan Google · {r.date}
+              </figcaption>
+            </figure>
+          ))
+        }
+      </div>
+      <a href={clinic.google.reviewsUrl} target="_blank" rel="noopener" class="mt-4 flex h-12 items-center justify-center rounded-xl border-[1.5px] border-line-strong bg-white text-[15px] font-bold text-brand no-underline md:inline-flex md:px-8">
+        Baca semua ulasan di Google
+      </a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="mx-auto max-w-3xl px-4 py-10 md:py-16">
+    <SectionHeading title="Soalan lazim" class="mb-4" />
+    <FaqList items={faqs} />
+  </section>
+
+  <!-- Location -->
+  <section class="bg-tint">
+    <div class="mx-auto grid max-w-6xl gap-4 px-4 py-9 md:grid-cols-2 md:py-16">
+      <h2 class="text-[25px] leading-tight font-extrabold md:col-span-2 md:text-[32px]">Lokasi dan waktu operasi</h2>
+      <a href={clinic.mapsUrl} target="_blank" rel="noopener" aria-label="Buka lokasi klinik di Google Maps" class="flex h-[190px] flex-col items-center justify-center gap-2 rounded-[18px] bg-placeholder text-[13px] font-semibold text-muted no-underline md:h-full">
+        <Icon name="pin" size={34} class="text-brand" />
+        [TODO: Imej peta statik, ketik untuk buka Google Maps]
+      </a>
+      <div class="flex flex-col gap-3.5 rounded-2xl bg-white p-[18px] md:p-6">
+        <div class="flex flex-col gap-1">
+          <span class="text-[13px] font-bold text-muted">Alamat</span>
+          <span class="text-[15px] leading-normal">{clinic.address}</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <span class="text-[13px] font-bold text-muted">Waktu operasi</span>
+          {
+            clinic.hours.map((h) => (
+              <div class="flex justify-between text-[15px]">
+                <span>{h.days}</span>
+                <span class="font-semibold">{h.time}</span>
+              </div>
+            ))
+          }
+        </div>
+        <a href={clinic.mapsUrl} target="_blank" rel="noopener" class="flex h-12 items-center justify-center rounded-xl bg-brand text-[15px] font-bold text-white no-underline hover:bg-brand-dark">
+          Dapatkan arah di Google Maps
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="bg-brand text-white">
+    <div class="mx-auto max-w-6xl px-4 py-10 md:flex md:items-center md:justify-between md:py-14">
+      <div>
+        <h2 class="mb-2.5 text-[26px] leading-tight font-extrabold md:text-[32px]">Ada soalan sebelum datang?</h2>
+        <p class="mb-5 text-base leading-relaxed text-slate-200 md:mb-0">Tanya kami di WhatsApp. Tiada komitmen untuk membuat temujanji.</p>
+      </div>
+      <WhatsAppButton variant="inverse" />
+    </div>
+  </section>
+</BaseLayout>

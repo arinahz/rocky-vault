@@ -1,0 +1,32 @@
+---
+import Icon from './Icon.astro';
+import { waLink, telLink } from '../lib/whatsapp';
+
+interface Props {
+  topic?: string;
+  label?: string;
+}
+const { topic, label = 'WhatsApp Kami' } = Astro.props;
+const href = waLink(topic);
+---
+
+<!-- Mobile: full-width bar -->
+<div class="fixed inset-x-0 bottom-0 z-40 flex gap-2.5 border-t border-line bg-white/95 px-4 pt-3 pb-[max(16px,env(safe-area-inset-bottom))] shadow-[0_-6px_20px_rgba(15,23,42,0.08)] md:hidden">
+  <a href={href} target="_blank" rel="noopener" data-track="lead" class="flex h-[52px] flex-1 items-center justify-center gap-2.5 rounded-[14px] bg-wa text-base font-bold text-white no-underline">
+    <Icon name="chat" size={21} />{label}
+  </a>
+  <a href={telLink} data-track="contact" aria-label="Telefon klinik" class="flex size-[52px] flex-none items-center justify-center rounded-[14px] border-[1.5px] border-line-strong text-brand">
+    <Icon name="phone" />
+  </a>
+</div>
+
+<!-- Desktop: floating pill -->
+<a
+  href={href}
+  target="_blank"
+  rel="noopener"
+  data-track="lead"
+  class="fixed right-6 bottom-6 z-40 hidden h-14 items-center gap-2.5 rounded-full bg-wa px-6 text-base font-bold text-white no-underline shadow-[0_8px_24px_rgba(21,128,61,0.3)] hover:bg-wa-dark md:flex"
+>
+  <Icon name="chat" />{label}
+</a>

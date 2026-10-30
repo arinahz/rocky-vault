@@ -1,0 +1,23 @@
+---
+import Icon from './Icon.astro';
+import type { Faq } from '../data/clinic';
+
+interface Props {
+  items: Faq[];
+}
+const { items } = Astro.props;
+---
+
+<div class="flex flex-col border-t border-line">
+  {
+    items.map((f) => (
+      <details class="group border-b border-line">
+        <summary class="flex min-h-14 items-center justify-between gap-3 py-3 text-base font-bold">
+          {f.q}
+          <Icon name="plus" size={20} strokeWidth={2.2} class="flex-none text-brand transition-transform group-open:rotate-45" />
+        </summary>
+        <p class="mb-4 text-[15px] leading-relaxed text-body">{f.a}</p>
+      </details>
+    ))
+  }
+</div>

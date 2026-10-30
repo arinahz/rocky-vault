@@ -1,0 +1,43 @@
+---
+import '@fontsource-variable/plus-jakarta-sans';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import StickyWhatsApp from '../components/StickyWhatsApp.astro';
+import { clinic } from '../data/clinic';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Used in the prefilled WhatsApp message: "Hi, saya berminat dengan <waTopic>." */
+  waTopic?: string;
+  waLabel?: string;
+  disclaimer?: string;
+}
+
+const { title, description, waTopic, waLabel, disclaimer } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="ms">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#16325c" />
+    <!-- Phase 6: Open Graph, schema, Meta Pixel and GA4 go here. -->
+  </head>
+  <body>
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-white focus:p-2">Langkau ke kandungan</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer disclaimer={disclaimer} />
+    <StickyWhatsApp topic={waTopic} label={waLabel} />
+  </body>
+</html>
