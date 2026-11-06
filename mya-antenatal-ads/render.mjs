@@ -1,10 +1,13 @@
 // Render compositions to out/<KTN|MLW>_Antenatal_<Angle>_<format>.mp4
 // Usage: node render.mjs [compositionId ...]   (no args = all)
+import fs from "node:fs";
 import path from "node:path";
 import { bundle } from "@remotion/bundler";
 import { getCompositions, renderMedia, renderStill } from "@remotion/renderer";
 
-const browserExecutable = process.env.REMOTION_BROWSER || "/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell";
+// REMOTION_BROWSER wins; else the cloud container's Chromium if present; else Remotion downloads its own.
+const CLOUD_CHROME = "/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell";
+const browserExecutable = process.env.REMOTION_BROWSER || (fs.existsSync(CLOUD_CHROME) ? CLOUD_CHROME : undefined);
 const serveUrl = await bundle({ entryPoint: path.resolve("src/index.ts") });
 const comps = await getCompositions(serveUrl, { browserExecutable });
 const wanted = process.argv.slice(2);
